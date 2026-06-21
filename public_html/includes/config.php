@@ -1,13 +1,23 @@
 <?php
-// Database Configuration
-define('DB_HOST', 'localhost');
-define('DB_USER', 'root'); // Ganti sesuai cPanel
-define('DB_PASS', '');     // Ganti sesuai cPanel
-define('DB_NAME', 'sewlovely'); // Ganti sesuai nama database di cPanel
-// Konfigurasi URL Utama
-// Jika Anda meletakkan web ini di dalam sub-folder (misal: public_html/sewlovely/), ubah menjadi '/sewlovely/'
-// Jika di root (domain utama), biarkan '/'
-define('BASE_URL', '/sewlovely/');
+// Environment Detection
+$http_host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+$is_local = (strpos($http_host, 'localhost') !== false || strpos($http_host, '127.0.0.1') !== false);
+
+if ($is_local) {
+    // Database Configuration untuk XAMPP Lokal
+    define('DB_HOST', 'localhost');
+    define('DB_USER', 'root');
+    define('DB_PASS', '');
+    define('DB_NAME', 'sewlovely');
+    define('BASE_URL', '/sewlovely/');
+} else {
+    // Database Configuration untuk cPanel (Production)
+    define('DB_HOST', 'localhost');
+    define('DB_USER', 'belt2974_sewlovely'); 
+    define('DB_PASS', 'yKBxs6fpyKE337');     
+    define('DB_NAME', 'belt2974_sewlovely'); 
+    define('BASE_URL', '/');
+}
 
 // Gemini AI API Key
 define('GEMINI_API_KEY', 'AIzaSyDYbArK5bLh0jMhmGVUnFjdQ6uIX3c0lNw');
