@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $name             = trim($_POST['name'] ?? '');
     $email            = trim($_POST['email'] ?? '');
     $phone            = trim($_POST['phone'] ?? '');
-    $birth_date       = $_POST['birth_date'] ?? null;
+    $birth_date       = !empty(trim($_POST['birth_date'] ?? '')) ? trim($_POST['birth_date']) : null;
     $address          = trim($_POST['address'] ?? '');
     $bank_name_select = trim($_POST['bank_name'] ?? '');
     $bank_name_custom = trim($_POST['bank_name_custom'] ?? '');
@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $user_id = $pdo->lastInsertId();
 
             $stmt = $pdo->prepare("INSERT INTO partners (user_id, full_name, whatsapp_number, birth_date, address, bank_name, account_number, account_holder, affiliate_code, is_active, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 'pending')");
-            $stmt->execute([$user_id, $name, $phone, $birth_date ?: null, $address, $bank_name ?: null, $account_number ?: null, $account_holder ?: null, $affiliate_code]);
+            $stmt->execute([$user_id, $name, $phone, $birth_date, $address, $bank_name ?: null, $account_number ?: null, $account_holder ?: null, $affiliate_code]);
 
             $pdo->commit();
 
@@ -82,8 +82,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } catch (Exception $e) {
             $pdo->rollBack();
             $message = $e->getMessage();
+            // Menampilkan error asli untuk sementara agar bug dapat diketahui
             if(strpos($message, 'SQLSTATE') !== false) {
-                $message = 'Terjadi kesalahan sistem. Silakan coba lagi.';
+                $message = 'Error Database: ' . $message;
             }
             $message_type = 'error';
         }
