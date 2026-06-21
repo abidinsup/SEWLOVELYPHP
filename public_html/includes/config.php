@@ -3,7 +3,7 @@
 define('DB_HOST', 'localhost');
 define('DB_USER', 'root'); // Ganti sesuai cPanel
 define('DB_PASS', '');     // Ganti sesuai cPanel
-define('DB_NAME', 'sewlovely_db'); // Ganti sesuai nama database di cPanel
+define('DB_NAME', 'sewlovely'); // Ganti sesuai nama database di cPanel
 // Konfigurasi URL Utama
 // Jika Anda meletakkan web ini di dalam sub-folder (misal: public_html/sewlovely/), ubah menjadi '/sewlovely/'
 // Jika di root (domain utama), biarkan '/'
