@@ -508,12 +508,18 @@ function recalcAll() {
             
             total += itemTotal;
 
-            const pkgLabels = {1:"Gorden",2:"Gor+Rel",3:"Vitrase",4:"Vit+Rel",5:"Gor+Rel+Vit+Rel"};
+            const pkgFullNames = {
+                1: "1 (Gorden)",
+                2: "2 (Gorden+Rel)",
+                3: "3 (Vitrase)",
+                4: "4 (Vitrase+Rel)",
+                5: "5 (Gor+Rel+Vit+Rel)"
+            };
             
             details.push(`
                 <div class="flex items-start justify-between bg-white/10 p-3 rounded-xl item-detail">
                     <div>
-                        <p class="font-bold text-sm flex items-center gap-2">${name} <span class="bg-white/20 px-1.5 py-0.5 rounded text-[10px] uppercase">Pkt ${p}</span></p>
+                        <p class="font-bold text-sm flex items-center gap-2">${name} <span class="bg-white/20 px-1.5 py-0.5 rounded text-[10px] uppercase">Paket ${pkgFullNames[p]}</span></p>
                         <div class="text-emerald-100 text-[11px] mt-1 space-y-0.5">
                             ${htmlParts.join('')}
                         </div>
@@ -524,7 +530,8 @@ function recalcAll() {
                 </div>
             `);
 
-            noteLines.push(`${index+1}. ${name} (Paket ${pkgLabels[p]}) - L:${w}cm T:${h}cm\n${textParts.join('\n')}\nSubtotal: Rp ${itemTotal.toLocaleString('id-ID')}`);
+            // Use the classic format so it parses perfectly in print_spk.php / view_invoice.php
+            noteLines.push(`${name} (Paket ${pkgFullNames[p]}): Rp ${itemTotal.toLocaleString('id-ID')}`);
             
             cartItems.push({
                 no: index+1, name, paket: p, w, h, gFullness, vFullness, 
@@ -540,7 +547,7 @@ function recalcAll() {
     rawTotal = total;
     
     document.getElementById('final_cart_json').value = JSON.stringify(cartItems);
-    document.getElementById('final_invoice_notes').value = noteLines.join('\n\n');
+    document.getElementById('final_invoice_notes').value = noteLines.join('\n');
     
     calculateTotal();
 }
