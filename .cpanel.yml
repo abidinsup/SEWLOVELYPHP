@@ -1,0 +1,5 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/belt2974/public_html/
+    - /bin/cp -R public_html/* $DEPLOYPATH
