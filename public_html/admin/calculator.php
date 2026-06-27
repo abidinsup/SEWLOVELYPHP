@@ -130,7 +130,7 @@ $stmt_surveys = $pdo->query("SELECT s.id, s.customer_name, s.customer_phone, s.c
                              JOIN partners p ON s.partner_id = p.id 
                              LEFT JOIN invoices i ON i.survey_id = s.id
                              WHERE s.status IN ('survey', 'waiting_payment', 'production')
-                             AND (s.calculator_type = 'rumah' OR s.calculator_type IS NULL OR s.calculator_type = '')
+                             AND (s.calculator_type IN ('rumah', 'gorden') OR s.calculator_type IS NULL OR s.calculator_type = '')
                              ORDER BY s.created_at DESC");
 $active_surveys = $stmt_surveys->fetchAll(PDO::FETCH_ASSOC);
 
@@ -509,21 +509,27 @@ function calculate() {
     });
 
     const p = selectedPackage;
+    const pkgLabels = {
+        1: "Paket 1 (Gorden Saja)",
+        2: "Paket 2 (Gorden + Rel)",
+        3: "Paket 3 (Vitrase Saja)",
+        4: "Paket 4 (Vitrase + Rel)",
+        5: "Paket 5 (Gorden+Rel+Vitrase+Rel)"
+    };
+    const pkgName = pkgLabels[p] || `Paket ${p}`;
+
     let details = [];
     let total = 0;
     let sambungMessages = [];
 
     const optGorden = document.getElementById('fabricGorden').selectedOptions[0];
     const priceGorden = parseFloat(optGorden?.dataset.price || 0);
-    const namaGorden = optGorden?.textContent.split(' — ')[0] || '-';
     
     const optVitrase = document.getElementById('fabricVitrase').selectedOptions[0];
     const priceVitrase = parseFloat(optVitrase?.dataset.price || 0);
-    const namaVitrase = optVitrase?.textContent.split(' — ')[0] || '-';
     
     const optRel = document.getElementById('railSelect').selectedOptions[0];
     const priceRel = parseFloat(optRel?.dataset.price || 0);
-    const namaRel = optRel?.textContent.split(' — ')[0] || '-';
 
     windows.forEach(win => {
         const width = win.w;
@@ -544,7 +550,8 @@ function calculate() {
             const meterKain = (width / 100) * gordenFullness * jumlahSambung;
             const meterRounded = Math.ceil(meterKain * 10) / 10;
             const harga = meterRounded * priceGorden;
-            details.push({ labelHTML: `${namaGorden}${winLabel}`, labelText: `${namaGorden}${winTextLabel}`, sub: `${width}cm ÷ 100 × ${gordenFullness} × ${jumlahSambung} = ${meterRounded.toFixed(1)}m`, meter: `${meterRounded.toFixed(1)} m`, price: harga });
+            const lbl = (p === 1) ? pkgName : `${pkgName} - Gorden`;
+            details.push({ labelHTML: `${lbl}${winLabel}`, labelText: `${lbl}${winTextLabel}`, sub: `${width}cm ÷ 100 × ${gordenFullness} × ${jumlahSambung} = ${meterRounded.toFixed(1)}m`, meter: `${meterRounded.toFixed(1)} m`, price: harga });
             total += harga;
         }
         
@@ -552,13 +559,15 @@ function calculate() {
             const meterVit = (width / 100) * vitraseFullness * jumlahSambung;
             const meterRounded = Math.ceil(meterVit * 10) / 10;
             const harga = meterRounded * priceVitrase;
-            details.push({ labelHTML: `${namaVitrase}${winLabel}`, labelText: `${namaVitrase}${winTextLabel}`, sub: `${width}cm ÷ 100 × ${vitraseFullness} × ${jumlahSambung} = ${meterRounded.toFixed(1)}m`, meter: `${meterRounded.toFixed(1)} m`, price: harga });
+            const lbl = (p === 3) ? pkgName : `${pkgName} - Vitrase`;
+            details.push({ labelHTML: `${lbl}${winLabel}`, labelText: `${lbl}${winTextLabel}`, sub: `${width}cm ÷ 100 × ${vitraseFullness} × ${jumlahSambung} = ${meterRounded.toFixed(1)}m`, meter: `${meterRounded.toFixed(1)} m`, price: harga });
             total += harga;
         }
         
         if ([2,4,5].includes(p)) {
             const harga = meterRel * priceRel;
-            details.push({ labelHTML: `${namaRel}${winLabel}`, labelText: `${namaRel}${winTextLabel}`, sub: `min(${width}cm, 100cm) → ${meterRel.toFixed(1)}m`, meter: `${meterRel.toFixed(1)} m`, price: harga });
+            const lbl = `${pkgName} - Rel`;
+            details.push({ labelHTML: `${lbl}${winLabel}`, labelText: `${lbl}${winTextLabel}`, sub: `min(${width}cm, 100cm) → ${meterRel.toFixed(1)}m`, meter: `${meterRel.toFixed(1)} m`, price: harga });
             total += harga;
         }
     });
