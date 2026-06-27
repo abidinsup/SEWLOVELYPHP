@@ -15,7 +15,6 @@ try {
             t.amount,
             t.status,
             t.created_at,
-            t.proof_url,
             p.full_name AS mitra,
             p.affiliate_code AS mitraId,
             p.bank_name AS bank,
@@ -40,7 +39,6 @@ try {
             'date' => date('d M Y', strtotime($w['created_at'])),
             'raw_date' => date('Y-m-d', strtotime($w['created_at'])),
             'status' => $w['status'],
-            'proof_url' => $w['proof_url'],
         ];
     }
 } catch (PDOException $e) {
@@ -150,8 +148,8 @@ try {
                                             <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase <?php echo $item['status'] == 'success' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'; ?>">
                                                 <?php echo $item['status'] == 'success' ? 'Berhasil' : 'Ditolak'; ?>
                                             </span>
-                                            <?php if($item['status'] == 'success' && !empty($item['proof_url'])): ?>
-                                                <button onclick="viewProof('<?php echo htmlspecialchars($item['proof_url']); ?>')" class="text-[10px] text-emerald-600 font-bold hover:underline">Lihat Bukti</button>
+                                            <?php if($item['status'] == 'success'): ?>
+                                                <span class="text-[10px] text-slate-400 font-medium">Via WhatsApp</span>
                                             <?php endif; ?>
                                         </div>
                                     <?php endif; ?>
@@ -173,27 +171,18 @@ function processWithdrawal(action, transactionId, mitraName) {
     
     if (isApprove) {
         Swal.fire({
-            title: 'Upload Bukti Transfer',
-            html: `Setujui penarikan untuk <strong>${mitraName}</strong>? Silakan upload bukti transfer.`,
-            input: 'file',
-            inputAttributes: {
-                'accept': 'image/*',
-                'aria-label': 'Upload bukti transfer Anda'
-            },
+            title: 'Konfirmasi Approve',
+            html: `Setujui penarikan untuk <strong>${mitraName}</strong>?<br><small class="text-slate-500">Pesan konfirmasi akan disiapkan, silakan lampirkan bukti transfer secara manual langsung di WhatsApp.</small>`,
             icon: 'question',
             showCancelButton: true,
             confirmButtonColor: '#059669',
             cancelButtonColor: '#64748b',
-            confirmButtonText: 'Approve & Upload',
+            confirmButtonText: 'Approve & Kirim WA',
             cancelButtonText: 'Batal',
             reverseButtons: true
         }).then((result) => {
             if (result.isConfirmed) {
-                if (!result.value) {
-                    Swal.fire('Peringatan', 'Harap pilih file bukti transfer.', 'warning');
-                    return;
-                }
-                submitWithdrawal(action, transactionId, result.value);
+                submitWithdrawal(action, transactionId);
             }
         });
     } else {
@@ -209,19 +198,16 @@ function processWithdrawal(action, transactionId, mitraName) {
             reverseButtons: true
         }).then((result) => {
             if (result.isConfirmed) {
-                submitWithdrawal(action, transactionId, null);
+                submitWithdrawal(action, transactionId);
             }
         });
     }
 }
 
-function submitWithdrawal(action, transactionId, file) {
+function submitWithdrawal(action, transactionId) {
     const formData = new FormData();
     formData.append('transaction_id', transactionId);
     formData.append('action', action);
-    if (file) {
-        formData.append('proof', file);
-    }
 
     fetch('../ajax/update_withdrawal.php', {
         method: 'POST',
@@ -230,25 +216,37 @@ function submitWithdrawal(action, transactionId, file) {
     .then(res => res.json())
     .then(data => {
         if (data.success) {
-            Swal.fire('Berhasil!', data.message, 'success').then(() => location.reload());
+            if (action === 'approve' && data.whatsapp_number) {
+                // Format amount
+                const amount = new Intl.NumberFormat('id-ID').format(data.amount);
+                const bankInfo = (data.bank_name && data.account_number) 
+                    ? `ke rekening ${data.bank_name} ${data.account_number}` 
+                    : '';
+                
+                // Build WhatsApp message (tanpa emoji/simbol agar tidak corrupt)
+                const waMessage = `*Konfirmasi Transfer Komisi Sewlovely*\n\n` +
+                    `Halo *${data.mitra_name}*, komisi Anda sebesar *Rp ${amount}* sudah ditransfer ${bankInfo}.\n\n` +
+                    `Terima kasih telah menjadi mitra Sewlovely.`;
+                
+                // Format WhatsApp number (ensure starts with country code)
+                let waNumber = data.whatsapp_number.replace(/[^0-9]/g, '');
+                if (waNumber.startsWith('0')) {
+                    waNumber = '62' + waNumber.substring(1);
+                }
+                
+                // Buka WhatsApp langsung bersamaan
+                window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(waMessage)}`, '_blank');
+                
+                Swal.fire('Berhasil!', 'Penarikan disetujui. Silakan lampirkan foto resi langsung di WhatsApp.', 'success')
+                    .then(() => location.reload());
+            } else {
+                Swal.fire('Berhasil!', data.message, 'success').then(() => location.reload());
+            }
         } else {
             Swal.fire('Gagal', data.message, 'error');
         }
     })
     .catch(() => Swal.fire('Error', 'Terjadi kesalahan koneksi', 'error'));
-}
-
-function viewProof(url) {
-    Swal.fire({
-        title: 'Bukti Transfer',
-        imageUrl: '../' + url,
-        imageAlt: 'Bukti Transfer',
-        customClass: {
-            image: 'rounded-xl max-w-full'
-        },
-        confirmButtonText: 'Tutup',
-        confirmButtonColor: '#64748b'
-    });
 }
 
 let currentTab = 'pending';

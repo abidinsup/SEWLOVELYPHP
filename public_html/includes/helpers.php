@@ -36,6 +36,7 @@ function getStatusBadge($status) {
 function getTypeLabel($type) {
     $labels = [
         'rumah'  => 'Gorden Rumah',
+        'gorden' => 'Gorden Rumah',
         'kantor' => 'Gorden Kantor',
         'rs'     => 'Gorden RS',
         'sprei'  => 'Sprei & Bedcover'

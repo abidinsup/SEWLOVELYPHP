@@ -9,7 +9,7 @@ if ($is_local) {
     define('DB_USER', 'root');
     define('DB_PASS', '');
     define('DB_NAME', 'sewlovely');
-    define('BASE_URL', '/sewlovely/');
+    define('BASE_URL', '/sewlovely_mobile/');
 } else {
     // Database Configuration untuk cPanel (Production)
     define('DB_HOST', 'localhost');
@@ -31,6 +31,8 @@ try {
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     // Set default fetch mode to associative array
     $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+    // Force buffered queries to prevent "Cannot execute queries while other unbuffered queries are active"
+    $pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
 } catch(PDOException $e) {
     die("Connection failed: " . $e->getMessage());
 }

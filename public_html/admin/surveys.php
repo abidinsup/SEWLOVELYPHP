@@ -130,7 +130,7 @@ try {
                         <!-- Actions -->
                         <div class="flex flex-wrap justify-end gap-1.5 border-t md:border-t-0 border-slate-100 pt-4 md:pt-0 mt-auto">
                             <?php if($survey['status'] == 'pending'): ?>
-                                <button onclick="updateSurveyStatus(<?php echo $survey['id']; ?>, 'survey', 'Proses Survey')" class="text-white rounded-md font-bold shadow-sm transition-all hover:opacity-90 flex items-center gap-1.5 text-xs uppercase tracking-wide leading-none" style="background-color: #2563eb; padding: 2px 12px;">
+                                <button onclick="startSurveyWithSchedule(<?php echo $survey['id']; ?>, '<?php echo $survey['survey_date']; ?>', '<?php echo $survey['survey_time']; ?>')" class="text-white rounded-md font-bold shadow-sm transition-all hover:opacity-90 flex items-center gap-1.5 text-xs uppercase tracking-wide leading-none" style="background-color: #2563eb; padding: 2px 12px;">
                                     <i data-lucide="play-circle" class="h-3 w-3"></i> Mulai Survey
                                 </button>
                                 <button onclick="updateSurveyStatus(<?php echo $survey['id']; ?>, 'cancelled', 'Batal')" class="text-white rounded-md font-bold shadow-sm transition-all hover:opacity-90 flex items-center gap-1.5 text-xs uppercase tracking-wide leading-none" style="background-color: #ef4444; padding: 2px 12px;">
@@ -140,6 +140,10 @@ try {
                                 <a href="<?php echo $calc_page; ?>?survey_id=<?php echo $survey['id']; ?>" class="text-white rounded-md font-bold shadow-sm transition-all hover:opacity-90 flex items-center gap-1.5 text-xs uppercase tracking-wide leading-none" style="background-color: #4f46e5; padding: 2px 12px;">
                                     <i data-lucide="calculator" class="h-3 w-3"></i> Buat Invoice
                                 </a>
+                                
+                                <button onclick="updateSurveySchedule(<?php echo $survey['id']; ?>, '<?php echo $survey['survey_date']; ?>', '<?php echo $survey['survey_time']; ?>')" class="text-white rounded-md font-bold shadow-sm transition-all hover:opacity-90 flex items-center gap-1.5 text-xs uppercase tracking-wide leading-none" style="background-color: #f59e0b; padding: 2px 12px;">
+                                    <i data-lucide="calendar" class="h-3 w-3"></i> Reschedule
+                                </button>
 
                                 <button onclick="updateSurveyStatus(<?php echo $survey['id']; ?>, 'pending', 'Menunggu Survey')" class="text-white rounded-md font-bold shadow-sm transition-all hover:opacity-90 flex items-center gap-1.5 text-xs uppercase tracking-wide leading-none" style="background-color: #64748b; padding: 2px 12px;">
                                     <i data-lucide="arrow-left" class="h-3 w-3"></i> Kembali
@@ -194,6 +198,92 @@ try {
 </div>
 
 <script>
+function startSurveyWithSchedule(surveyId, date = '', time = '') {
+    promptSchedule(surveyId, 'survey', 'Proses Survey', date, time);
+}
+
+function updateSurveySchedule(surveyId, date = '', time = '') {
+    promptSchedule(surveyId, 'survey', 'Update Jadwal', date, time);
+}
+
+function promptSchedule(surveyId, newStatus, label, existingDate = '', existingTime = '') {
+    if (existingDate === '0000-00-00') existingDate = '';
+    
+    const timeOptions = [
+        '09:00',
+        '10:00',
+        '11:00',
+        '12:00',
+        '13:00',
+        '14:00',
+        '15:00',
+        '16:00',
+        '17:00'
+    ];
+    
+    let timeOptionsHtml = '<option value="">-- Pilih Jam --</option>';
+    let timePrefix = existingTime ? existingTime.substring(0, 2) : '';
+    
+    timeOptions.forEach(opt => {
+        let isSelected = (timePrefix !== '' && opt.startsWith(timePrefix)) ? 'selected' : '';
+        timeOptionsHtml += `<option value="${opt}" ${isSelected}>${opt}</option>`;
+    });
+    
+    Swal.fire({
+        title: 'Tentukan Jadwal Survey',
+        html: `
+            <div class="flex flex-col gap-4 text-left p-2">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Tanggal Survey</label>
+                    <input type="date" id="swal-date" value="${existingDate}" class="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-emerald-500 text-sm">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Jam Survey (WIB)</label>
+                    <select id="swal-time" class="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-emerald-500 text-sm">
+                        ${timeOptionsHtml}
+                    </select>
+                </div>
+            </div>
+        `,
+        showCancelButton: true,
+        confirmButtonColor: '#059669',
+        cancelButtonColor: '#64748b',
+        confirmButtonText: 'Simpan Jadwal',
+        cancelButtonText: 'Batal',
+        preConfirm: () => {
+            const date = document.getElementById('swal-date').value;
+            const time = document.getElementById('swal-time').value;
+            if (!date || !time) {
+                Swal.showValidationMessage('Harap isi tanggal dan jam survey!');
+                return false;
+            }
+            return { date, time };
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const formData = new FormData();
+            formData.append('survey_id', surveyId);
+            formData.append('status', newStatus);
+            formData.append('survey_date', result.value.date);
+            formData.append('survey_time', result.value.time);
+
+            fetch('../ajax/update_survey_status.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire('Berhasil!', 'Jadwal berhasil disimpan.', 'success').then(() => location.reload());
+                } else {
+                    Swal.fire('Gagal', data.message, 'error');
+                }
+            })
+            .catch(() => Swal.fire('Error', 'Terjadi kesalahan koneksi', 'error'));
+        }
+    });
+}
+
 function updateSurveyStatus(surveyId, newStatus, label) {
     const isCancel = newStatus === 'cancelled';
     Swal.fire({

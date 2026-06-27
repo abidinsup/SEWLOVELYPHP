@@ -243,7 +243,7 @@ if ($isLoggedIn) {
                         class="text-base md:text-lg lg:text-xl text-leaf-900/70 mb-8 md:mb-10 leading-relaxed max-w-lg mx-auto lg:mx-0">
                         Bergabunglah menjadi mitra affiliate resmi <span class="font-bold text-bright-600">Sewlovely
                             Homeset</span>. Tawarkan produk interior premium dan dapatkan <strong
-                            class="text-leaf-800 border-b-2 border-bright-500">Komisi 10%</strong> dari setiap
+                            class="text-leaf-800 border-b-2 border-bright-500">Komisi 5%</strong> dari setiap
                         penjualan.
                     </p>
 
@@ -282,7 +282,7 @@ if ($isLoggedIn) {
                         </div>
                         <div>
                             <p class="text-xs md:text-sm font-bold text-leaf-900">Komisi Tinggi</p>
-                            <p class="text-[10px] md:text-xs font-medium text-leaf-700">10% per Proyek</p>
+                            <p class="text-[10px] md:text-xs font-medium text-leaf-700">5% per Proyek</p>
                         </div>
                     </div>
                 </div>
@@ -322,10 +322,10 @@ if ($isLoggedIn) {
                         class="w-16 h-16 md:w-20 md:h-20 bg-leaf-800 rounded-2xl md:rounded-[2rem] liquid-shape flex items-center justify-center mb-6 md:mb-8 relative z-10 group-hover:bg-bright-500 transition-colors duration-500">
                         <i data-lucide="wallet" class="w-7 h-7 md:w-8 md:h-8 text-cream-100"></i>
                     </div>
-                    <h3 class="text-xl md:text-2xl font-bold text-leaf-900 mb-3 md:mb-4 relative z-10">Komisi 10%
+                    <h3 class="text-xl md:text-2xl font-bold text-leaf-900 mb-3 md:mb-4 relative z-10">Komisi 5%
                         Langsung</h3>
                     <p class="text-sm md:text-base text-leaf-700 leading-relaxed relative z-10">
-                        Dapatkan komisi sebesar 10% dari total nilai proyek untuk setiap pelanggan yang Anda
+                        Dapatkan komisi sebesar 5% dari total nilai proyek untuk setiap pelanggan yang Anda
                         referensikan. Tanpa syarat rumit.
                     </p>
                 </div>
@@ -450,7 +450,7 @@ if ($isLoggedIn) {
                     </div>
                     <h3 class="text-xl md:text-2xl font-bold text-cream-50 mb-3 md:mb-4">Terima Komisi</h3>
                     <p class="text-sm md:text-base text-cream-200/70 leading-relaxed px-2 md:px-4">Team kami akan visit
-                        ke tempat klien yang anda referensikan, komisi 10% otomatis masuk ke anda setelah pemesanan dan
+                        ke tempat klien yang anda referensikan, komisi 5% otomatis masuk ke anda setelah pemesanan dan
                         pembayaran selesai.</p>
                 </div>
             </div>

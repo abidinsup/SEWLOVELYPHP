@@ -20,7 +20,7 @@ $rails = $pdo->query("SELECT * FROM curtain_rails ORDER BY type, name")->fetchAl
                 <p class="text-xs text-slate-500 hidden md:block">Kelola harga kain dan rel untuk kalkulator gorden</p>
             </div>
             <div class="flex gap-2">
-                <a href="curtain_calculator.php" class="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-lg shadow-cyan-500/20 transition-all flex items-center gap-2">
+                <a href="calculator.php" style="background-color: #1e293b; color: #ffffff;" class="px-4 py-2 rounded-xl text-sm font-bold shadow-lg transition-all flex items-center gap-2 hover:opacity-80">
                     <i data-lucide="calculator" class="h-4 w-4"></i> <span class="hidden sm:inline">Kalkulator</span>
                 </a>
             </div>

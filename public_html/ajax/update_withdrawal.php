@@ -19,33 +19,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     try {
         $new_status = ($action === 'approve') ? 'success' : 'rejected';
-        $proof_url = null;
 
-        // Handle file upload if present
-        if ($action === 'approve' && isset($_FILES['proof']) && $_FILES['proof']['error'] === UPLOAD_ERR_OK) {
-            $upload_dir = '../uploads/proofs/';
-            if (!is_dir($upload_dir)) {
-                mkdir($upload_dir, 0755, true);
-            }
-            $file_extension = pathinfo($_FILES['proof']['name'], PATHINFO_EXTENSION);
-            $file_name = 'proof_' . $transaction_id . '_' . time() . '.' . $file_extension;
-            $target_file = $upload_dir . $file_name;
-            
-            if (move_uploaded_file($_FILES['proof']['tmp_name'], $target_file)) {
-                $proof_url = 'uploads/proofs/' . $file_name;
-            }
-        }
-
-        if ($proof_url) {
-            $stmt = $pdo->prepare("UPDATE transactions SET status = ?, proof_url = ? WHERE id = ? AND type = 'withdraw' AND status = 'pending'");
-            $result = $stmt->execute([$new_status, $proof_url, $transaction_id]);
-        } else {
-            $stmt = $pdo->prepare("UPDATE transactions SET status = ? WHERE id = ? AND type = 'withdraw' AND status = 'pending'");
-            $result = $stmt->execute([$new_status, $transaction_id]);
-        }
+        // Update transaction status (without proof)
+        $stmt = $pdo->prepare("UPDATE transactions SET status = ? WHERE id = ? AND type = 'withdraw' AND status = 'pending'");
+        $result = $stmt->execute([$new_status, $transaction_id]);
 
         if ($result && $stmt->rowCount() > 0) {
-            echo json_encode(['success' => true, 'message' => ($action === 'approve') ? 'Penarikan berhasil disetujui' : 'Penarikan berhasil ditolak']);
+            $response = [
+                'success' => true,
+                'message' => ($action === 'approve') ? 'Penarikan berhasil disetujui' : 'Penarikan berhasil ditolak'
+            ];
+
+            // If approved, fetch mitra data for WhatsApp confirmation
+            if ($action === 'approve') {
+                $stmt2 = $pdo->prepare("
+                    SELECT p.whatsapp_number, p.full_name, p.bank_name, p.account_number, t.amount
+                    FROM transactions t
+                    JOIN partners p ON t.partner_id = p.id
+                    WHERE t.id = ?
+                ");
+                $stmt2->execute([$transaction_id]);
+                $mitra = $stmt2->fetch();
+
+                if ($mitra) {
+                    $response['whatsapp_number'] = $mitra['whatsapp_number'];
+                    $response['mitra_name'] = $mitra['full_name'];
+                    $response['bank_name'] = $mitra['bank_name'];
+                    $response['account_number'] = $mitra['account_number'];
+                    $response['amount'] = (float)$mitra['amount'];
+                }
+            }
+
+            echo json_encode($response);
         } else {
             echo json_encode(['success' => false, 'message' => 'Transaksi tidak ditemukan atau sudah diproses']);
         }

@@ -32,7 +32,20 @@ $company_email = "hello@sewlovely.com";
 
 // Parse Invoice Notes to Table
 $items = [];
-if (!empty($data['invoice_notes'])) {
+if (!empty($data['cart_items'])) {
+    $cartData = json_decode($data['cart_items'], true);
+    if (is_array($cartData)) {
+        foreach ($cartData as $index => $item) {
+            $items[] = [
+                'no' => $index + 1,
+                'name' => $item['productName'] ?? 'Produk',
+                'qty' => $item['quantity'] ?? 1,
+                'unit_price' => number_format((float)($item['price'] ?? 0), 0, ',', '.'),
+                'total' => number_format((float)(($item['price'] ?? 0) * ($item['quantity'] ?? 1)), 0, ',', '.')
+            ];
+        }
+    }
+} elseif (!empty($data['invoice_notes'])) {
     $lines = explode("\n", trim($data['invoice_notes']));
     foreach ($lines as $line) {
         if (trim($line) === '') continue;

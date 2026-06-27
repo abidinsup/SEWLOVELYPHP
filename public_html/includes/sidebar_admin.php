@@ -8,10 +8,14 @@ if (isset($pdo)) {
     try {
         $stmt = $pdo->query("SELECT COUNT(*) FROM surveys WHERE status = 'pending'");
         $pending_count = $stmt->fetchColumn();
+        $stmt->closeCursor();
 
         $stmt = $pdo->query("SELECT COUNT(*) FROM partners WHERE status = 'pending'");
         $pending_partners_count = $stmt->fetchColumn();
-    } catch (PDOException $e) {}
+        $stmt->closeCursor();
+    } catch (PDOException $e) {
+        error_log("Sidebar Admin PDO Error: " . $e->getMessage());
+    }
 }
 
 $menu_items = [

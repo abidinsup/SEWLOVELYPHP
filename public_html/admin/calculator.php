@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['survey_id'])) {
             $discountLine = "*DISKON   :* -Rp " . number_format($fullData['discount_amount'], 0, ',', '.') . "\n";
         }
 
-        $itemsText = !empty($invoice_notes) ? "*ITEM PESANAN:*\n" . $invoice_notes . "----------------------------\n" : "";
+        $itemsText = !empty($invoice_notes) ? "*ITEM PESANAN:*\n" . $invoice_notes . "\n----------------------------\n" : "";
 
         $waMessage = "============================\n" .
                      "      *SEWLOVELY HOMESET*   \n" .
@@ -204,136 +204,24 @@ include '../includes/sidebar_admin.php';
                     </select>
                 </div>
 
-                <!-- STEP 1: Pilih Paket -->
-                <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm space-y-4">
-                    <div class="flex items-center gap-3 mb-2">
-                        <div class="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center text-emerald-600 font-black text-sm">1</div>
-                        <h3 class="font-bold text-slate-800">Pilih Paket</h3>
-                    </div>
-                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
-                        <div class="pkg-card active" onclick="selectPackage(1, this)">
-                            <div class="pkg-icon"><i data-lucide="blinds" class="h-5 w-5"></i></div>
-                            <p class="pkg-label">Paket 1</p>
-                            <p class="pkg-desc">Gorden Saja</p>
-                        </div>
-                        <div class="pkg-card" onclick="selectPackage(2, this)">
-                            <div class="pkg-icon"><i data-lucide="layout-grid" class="h-5 w-5"></i></div>
-                            <p class="pkg-label">Paket 2</p>
-                            <p class="pkg-desc">Gorden + Rel</p>
-                        </div>
-                        <div class="pkg-card" onclick="selectPackage(3, this)">
-                            <div class="pkg-icon"><i data-lucide="sun" class="h-5 w-5"></i></div>
-                            <p class="pkg-label">Paket 3</p>
-                            <p class="pkg-desc">Vitrase Saja</p>
-                        </div>
-                        <div class="pkg-card" onclick="selectPackage(4, this)">
-                            <div class="pkg-icon"><i data-lucide="sun" class="h-5 w-5"></i><i data-lucide="plus" class="h-3 w-3 mx-0.5"></i><i data-lucide="grip-horizontal" class="h-5 w-5"></i></div>
-                            <p class="pkg-label">Paket 4</p>
-                            <p class="pkg-desc">Vitrase + Rel</p>
-                        </div>
-                        <div class="pkg-card" onclick="selectPackage(5, this)">
-                            <div class="pkg-icon"><i data-lucide="layers" class="h-5 w-5"></i></div>
-                            <p class="pkg-label">Paket 5</p>
-                            <p class="pkg-desc text-[9px]">Gorden+Rel+Vitrase+Rel</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- STEP 2: Ukuran -->
+                <!-- 2. DAFTAR JENDELA / ITEM -->
                 <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm space-y-4">
                     <div class="flex items-center justify-between mb-2">
                         <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 font-black text-sm">2</div>
-                            <h3 class="font-bold text-slate-800">Ukuran Jendela</h3>
+                            <div class="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center text-emerald-600 font-black text-sm"><i data-lucide="layout" class="h-4 w-4"></i></div>
+                            <h3 class="font-bold text-slate-800">Daftar Jendela (Item)</h3>
                         </div>
-                        <button type="button" onclick="addWindow()" class="text-xs bg-blue-50 text-blue-600 hover:bg-blue-100 px-3 py-1.5 rounded-xl font-bold flex items-center gap-1.5 transition-all shadow-sm">
+                        <button type="button" onclick="addWindow()" class="text-xs bg-emerald-50 text-emerald-600 hover:bg-emerald-100 px-3 py-1.5 rounded-xl font-bold flex items-center gap-1.5 transition-all shadow-sm">
                             <i data-lucide="plus" class="h-3 w-3"></i> Tambah Jendela
                         </button>
                     </div>
                     
-                    <div id="windowList" class="space-y-3">
-                        <!-- Window 1 -->
-                        <div class="window-item bg-slate-50/70 border border-slate-100 p-4 rounded-2xl relative group">
-                            <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-wider mb-3 window-title">Jendela 1</h4>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div class="space-y-1">
-                                    <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider pl-1">Lebar Rel (cm)</label>
-                                    <input type="number" value="200" min="30" max="1500" oninput="calculate()" class="window-width w-full h-11 px-3 bg-white border border-slate-200 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl text-sm font-bold text-center transition-all" />
-                                </div>
-                                <div class="space-y-1">
-                                    <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider pl-1">Tinggi (cm)</label>
-                                    <input type="number" value="250" min="50" max="600" oninput="calculate()" class="window-height w-full h-11 px-3 bg-white border border-slate-200 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl text-sm font-bold text-center transition-all" />
-                                </div>
-                            </div>
-                        </div>
+                    <div id="windowList">
+                        <!-- Items will be injected here -->
                     </div>
-
-                    <!-- Sambung Info -->
-                    <div id="sambungInfo" class="hidden flex items-start gap-3 p-3 bg-amber-50 border border-amber-200 rounded-xl">
-                        <i data-lucide="alert-triangle" class="h-4 w-4 text-amber-600 mt-0.5 shrink-0"></i>
-                        <p class="text-xs text-amber-800 font-medium" id="sambungText"></p>
-                    </div>
-                </div>
-
-                <!-- STEP 3: Lipatan -->
-                <div id="stepFullness" class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm space-y-4">
-                    <div class="flex items-center gap-3 mb-2">
-                        <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center text-purple-600 font-black text-sm">3</div>
-                        <h3 class="font-bold text-slate-800">Pilih Lipatan (Fullness)</h3>
-                    </div>
-                    <!-- Gorden Fullness -->
-                    <div id="gordenFullnessSection">
-                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 pl-1">Fullness Gorden</p>
-                        <div class="flex gap-3">
-                            <button type="button" class="fullness-btn" onclick="setFullness('gorden', 2, this)">×2</button>
-                            <button type="button" class="fullness-btn active" onclick="setFullness('gorden', 2.5, this)">×2.5</button>
-                            <button type="button" class="fullness-btn" onclick="setFullness('gorden', 3, this)">×3</button>
-                        </div>
-                    </div>
-                    <!-- Vitrase Fullness -->
-                    <div id="vitraseFullnessSection" class="hidden mt-4">
-                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 pl-1">Fullness Vitrase</p>
-                        <div class="flex gap-3">
-                            <button type="button" class="fullness-btn-v active" onclick="setFullness('vitrase', 2, this)">×2</button>
-                            <button type="button" class="fullness-btn-v" onclick="setFullness('vitrase', 2.5, this)">×2.5</button>
-                            <button type="button" class="fullness-btn-v" onclick="setFullness('vitrase', 3, this)">×3</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- STEP 4: Pilih Bahan -->
-                <div id="stepMaterial" class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm space-y-4">
-                    <div class="flex items-center gap-3 mb-2">
-                        <div class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center text-orange-600 font-black text-sm">4</div>
-                        <h3 class="font-bold text-slate-800">Pilih Bahan</h3>
-                    </div>
-
-                    <!-- Gorden -->
-                    <div id="selectGorden" class="space-y-2">
-                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider pl-1">Gorden</label>
-                        <select id="fabricGorden" onchange="calculate()" class="w-full h-12 px-4 bg-slate-50 border border-slate-200 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl text-sm font-medium">
-                            <?php foreach($fabrics_gorden as $f): ?>
-                            <option value="<?php echo $f['id']; ?>" data-price="<?php echo $f['price_per_meter']; ?>"><?php echo htmlspecialchars($f['name']); ?> — Rp <?php echo number_format($f['price_per_meter'],0,',','.'); ?>/m</option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-
-                    <!-- Vitrase -->
-                    <div id="selectVitrase" class="space-y-2 hidden">
-                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider pl-1">Vitrase</label>
-                        <select id="fabricVitrase" onchange="calculate()" class="w-full h-12 px-4 bg-slate-50 border border-slate-200 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl text-sm font-medium">
-                            <?php foreach($fabrics_vitrase as $f): ?>
-                            <option value="<?php echo $f['id']; ?>" data-price="<?php echo $f['price_per_meter']; ?>"><?php echo htmlspecialchars($f['name']); ?> — Rp <?php echo number_format($f['price_per_meter'],0,',','.'); ?>/m</option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-
-                    <!-- Rel -->
-                    <div id="selectRel" class="space-y-2 hidden">
-                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider pl-1" id="relLabel">Rel</label>
-                        <select id="railSelect" onchange="calculate()" class="w-full h-12 px-4 bg-slate-50 border border-slate-200 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl text-sm font-medium">
-                        </select>
-                    </div>
+                    <p id="emptyHint" class="text-center text-slate-400 text-sm py-8 font-medium">
+                        Klik <strong>Tambah Jendela</strong> untuk mulai menghitung estimasi
+                    </p>
                 </div>
 
                 <!-- RESULT -->
@@ -386,216 +274,274 @@ include '../includes/sidebar_admin.php';
 
 <script>
 // ==================== DATA FROM PHP ====================
+const fabricsGorden = <?php echo json_encode($fabrics_gorden); ?>;
+const fabricsVitrase = <?php echo json_encode($fabrics_vitrase); ?>;
 const railsSingle = <?php echo json_encode($rails_single); ?>;
 const railsDouble = <?php echo json_encode($rails_double); ?>;
 
-// ==================== STATE ====================
-let selectedPackage = 1;
-let gordenFullness = 2.5;
-let vitraseFullness = 2;
+// Options HTML pre-generation
+const optsGorden = fabricsGorden.map(f => `<option value="${f.id}" data-price="${f.price_per_meter}">${f.name} — Rp ${Number(f.price_per_meter).toLocaleString('id-ID')}/m</option>`).join('');
+const optsVitrase = fabricsVitrase.map(f => `<option value="${f.id}" data-price="${f.price_per_meter}">${f.name} — Rp ${Number(f.price_per_meter).toLocaleString('id-ID')}/m</option>`).join('');
+const optsRailSingle = railsSingle.map(f => `<option value="${f.id}" data-price="${f.price_per_meter}">${f.name} — Rp ${Number(f.price_per_meter).toLocaleString('id-ID')}/m</option>`).join('');
+const optsRailDouble = railsDouble.map(f => `<option value="${f.id}" data-price="${f.price_per_meter}">${f.name} — Rp ${Number(f.price_per_meter).toLocaleString('id-ID')}/m</option>`).join('');
 
 const KAIN_WIDTH = 280;
 const KELIMAN = 20;
 
+let windowCount = 0;
 let rawTotal = 0;
 
-// ==================== PACKAGE SELECTION ====================
-function selectPackage(pkg, el) {
-    selectedPackage = pkg;
-    document.querySelectorAll('.pkg-card').forEach(c => c.classList.remove('active'));
-    el.classList.add('active');
-    lucide.createIcons();
-    updateVisibility();
-    calculate();
+// ==================== WINDOW MULTIPLIER ====================
+function addWindow(data = null) {
+    windowCount++;
+    const id = windowCount;
+    const list = document.getElementById('windowList');
+    document.getElementById('emptyHint').style.display = 'none';
+
+    const div = document.createElement('div');
+    div.className = 'window-item bg-white p-5 rounded-2xl border border-slate-200 shadow-sm relative mb-4 transition-all hover:border-emerald-200';
+    div.dataset.id = id;
+
+    div.innerHTML = `
+        <div class="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
+            <div class="flex items-center gap-2">
+                <span class="w-6 h-6 bg-emerald-100 text-emerald-600 rounded-md flex items-center justify-center font-bold text-xs">${id}</span>
+                <input type="text" class="i-name font-bold text-sm text-slate-800 border-none bg-transparent focus:outline-none focus:ring-0 p-0 w-48" value="${data?.name ?? 'Jendela ' + id}" oninput="recalcAll()" placeholder="Nama Jendela">
+            </div>
+            <button type="button" onclick="removeWindow(${id})" class="text-red-400 hover:text-red-600 bg-red-50 hover:bg-red-100 p-1.5 rounded-lg shadow-sm transition-all"><i data-lucide="trash-2" class="h-4 w-4"></i></button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-10 gap-4 mb-3">
+            <!-- Paket -->
+            <div class="md:col-span-2 space-y-1">
+                <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider pl-1">Paket</label>
+                <select class="i-paket w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold focus:border-emerald-500 focus:outline-none" onchange="updateWindowVisibility(${id}); recalcAll()">
+                    <option value="1">1 (Gorden)</option>
+                    <option value="2">2 (Gorden+Rel)</option>
+                    <option value="3">3 (Vitrase)</option>
+                    <option value="4">4 (Vitrase+Rel)</option>
+                    <option value="5">5 (Gor+Rel+Vit+Rel)</option>
+                </select>
+            </div>
+
+            <!-- Ukuran -->
+            <div class="md:col-span-2 space-y-1">
+                <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider pl-1">Lebar Rel (cm)</label>
+                <input type="number" class="i-lebar w-full h-10 px-3 bg-white border border-slate-200 focus:border-emerald-500 focus:outline-none rounded-xl text-xs font-bold text-center" value="${data?.lebar ?? 200}" min="30" oninput="recalcAll()">
+            </div>
+            <div class="md:col-span-2 space-y-1">
+                <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider pl-1">Tinggi (cm)</label>
+                <input type="number" class="i-tinggi w-full h-10 px-3 bg-white border border-slate-200 focus:border-emerald-500 focus:outline-none rounded-xl text-xs font-bold text-center" value="${data?.tinggi ?? 250}" min="50" oninput="recalcAll()">
+            </div>
+            
+            <!-- Fullness -->
+            <div class="md:col-span-2 space-y-1 i-gorden-fullness-group">
+                <label class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider pl-1">Lipatan Gor.</label>
+                <select class="i-gorden-fullness w-full h-10 px-3 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-xl text-xs font-bold focus:outline-none" onchange="recalcAll()">
+                    <option value="2">x2</option>
+                    <option value="2.5" selected>x2.5</option>
+                    <option value="3">x3</option>
+                </select>
+            </div>
+            <div class="md:col-span-2 space-y-1 i-vitrase-fullness-group hidden">
+                <label class="text-[10px] font-bold text-sky-600 uppercase tracking-wider pl-1">Lipatan Vit.</label>
+                <select class="i-vitrase-fullness w-full h-10 px-3 bg-sky-50 text-sky-700 border border-sky-200 rounded-xl text-xs font-bold focus:outline-none" onchange="recalcAll()">
+                    <option value="2" selected>x2</option>
+                    <option value="2.5">x2.5</option>
+                    <option value="3">x3</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Bahan -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-3 border-t border-slate-100">
+            <div class="space-y-1 i-gorden-group">
+                <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider pl-1">Kain Gorden</label>
+                <select class="i-gorden w-full h-10 px-3 bg-slate-50 border border-slate-200 focus:border-emerald-500 focus:outline-none rounded-xl text-xs font-medium" onchange="recalcAll()">
+                    ${optsGorden}
+                </select>
+            </div>
+            <div class="space-y-1 i-vitrase-group hidden">
+                <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider pl-1">Kain Vitrase</label>
+                <select class="i-vitrase w-full h-10 px-3 bg-slate-50 border border-slate-200 focus:border-emerald-500 focus:outline-none rounded-xl text-xs font-medium" onchange="recalcAll()">
+                    ${optsVitrase}
+                </select>
+            </div>
+            <div class="space-y-1 i-rel-group hidden">
+                <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider pl-1 i-rel-label">Rel</label>
+                <select class="i-rel w-full h-10 px-3 bg-slate-50 border border-slate-200 focus:border-emerald-500 focus:outline-none rounded-xl text-xs font-medium" onchange="recalcAll()">
+                </select>
+            </div>
+        </div>
+        
+        <div class="mt-3 bg-amber-50 p-3 rounded-xl border border-amber-200 text-xs text-amber-800 hidden i-sambung-info font-medium flex items-start gap-2">
+            <i data-lucide="alert-triangle" class="h-4 w-4 mt-0.5 shrink-0 text-amber-600"></i>
+            <span class="i-sambung-text"></span>
+        </div>
+    `;
+
+    list.appendChild(div);
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+    
+    // Set explicit values if data provided (for loading cart state if implemented)
+    if (data) {
+        div.querySelector('.i-paket').value = data.paket;
+        div.querySelector('.i-gorden-fullness').value = data.gFullness;
+        div.querySelector('.i-vitrase-fullness').value = data.vFullness;
+        if(data.gordenId) div.querySelector('.i-gorden').value = data.gordenId;
+        if(data.vitraseId) div.querySelector('.i-vitrase').value = data.vitraseId;
+    }
+    
+    updateWindowVisibility(id);
+    if (data && data.relId) div.querySelector('.i-rel').value = data.relId;
+
+    recalcAll();
 }
 
-function updateVisibility() {
-    const p = selectedPackage;
+function removeWindow(id) {
+    const el = document.querySelector(`.window-item[data-id="${id}"]`);
+    if (el) el.remove();
+    if (document.querySelectorAll('.window-item').length === 0) {
+        document.getElementById('emptyHint').style.display = 'block';
+    }
+    recalcAll();
+}
+
+function updateWindowVisibility(id) {
+    const el = document.querySelector(`.window-item[data-id="${id}"]`);
+    if (!el) return;
+
+    const p = parseInt(el.querySelector('.i-paket').value);
     const hasGorden = [1,2,5].includes(p);
     const hasVitrase = [3,4,5].includes(p);
     const hasRel = [2,4,5].includes(p);
-    const needsFullness = true; // all packages now need fullness either for gorden or vitrase
 
-    document.getElementById('selectGorden').classList.toggle('hidden', !hasGorden);
-    document.getElementById('selectVitrase').classList.toggle('hidden', !hasVitrase);
-    document.getElementById('selectRel').classList.toggle('hidden', !hasRel);
-    document.getElementById('stepFullness').classList.toggle('hidden', !needsFullness);
-    document.getElementById('gordenFullnessSection').classList.toggle('hidden', !hasGorden);
-    document.getElementById('vitraseFullnessSection').classList.toggle('hidden', !hasVitrase);
-
-    // Populate rel dropdown based on package
-    if (hasRel) {
-        const rails = (p === 5) ? railsDouble : railsSingle;
-        const label = (p === 5) ? 'Rel Double (Twin)' : 'Rel';
-        document.getElementById('relLabel').textContent = label;
-        const sel = document.getElementById('railSelect');
-        sel.innerHTML = '';
-        rails.forEach(r => {
-            const opt = document.createElement('option');
-            opt.value = r.id;
-            opt.dataset.price = r.price_per_meter;
-            opt.textContent = `${r.name} — Rp ${Number(r.price_per_meter).toLocaleString('id-ID')}/m`;
-            sel.appendChild(opt);
-        });
-        // If no double rails but package 5, fall back to single
-        if (rails.length === 0 && p === 5) {
-            railsSingle.forEach(r => {
-                const opt = document.createElement('option');
-                opt.value = r.id;
-                opt.dataset.price = r.price_per_meter;
-                opt.textContent = `${r.name} — Rp ${Number(r.price_per_meter).toLocaleString('id-ID')}/m`;
-                sel.appendChild(opt);
-            });
-        }
-    }
-}
-
-// ==================== FULLNESS SELECTION ====================
-function setFullness(type, val, el) {
-    if (type === 'gorden') {
-        gordenFullness = val;
-        document.querySelectorAll('.fullness-btn').forEach(b => b.classList.remove('active'));
-    } else {
-        vitraseFullness = val;
-        document.querySelectorAll('.fullness-btn-v').forEach(b => b.classList.remove('active'));
-    }
-    el.classList.add('active');
-    calculate();
-}
-
-// ==================== WINDOW MULTIPLIER ====================
-function addWindow() {
-    const list = document.getElementById('windowList');
-    const count = list.querySelectorAll('.window-item').length + 1;
+    el.querySelector('.i-gorden-group').classList.toggle('hidden', !hasGorden);
+    el.querySelector('.i-gorden-fullness-group').classList.toggle('hidden', !hasGorden);
     
-    const div = document.createElement('div');
-    div.className = 'window-item bg-slate-50/70 border border-slate-100 p-4 rounded-2xl relative group transition-all';
-    div.innerHTML = `
-        <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-wider mb-3 window-title">Jendela ${count}</h4>
-        <button type="button" onclick="removeWindow(this)" class="absolute top-3 right-3 text-red-400 hover:text-red-600 bg-white hover:bg-red-50 p-1.5 rounded-lg shadow-sm transition-all"><i data-lucide="trash-2" class="h-4 w-4"></i></button>
-        <div class="grid grid-cols-2 gap-4">
-            <div class="space-y-1">
-                <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider pl-1">Lebar Rel (cm)</label>
-                <input type="number" value="200" min="30" max="1500" oninput="calculate()" class="window-width w-full h-11 px-3 bg-white border border-slate-200 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl text-sm font-bold text-center transition-all" />
-            </div>
-            <div class="space-y-1">
-                <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider pl-1">Tinggi (cm)</label>
-                <input type="number" value="250" min="50" max="600" oninput="calculate()" class="window-height w-full h-11 px-3 bg-white border border-slate-200 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl text-sm font-bold text-center transition-all" />
-            </div>
-        </div>
-    `;
-    list.appendChild(div);
-    lucide.createIcons();
-    calculate();
-}
+    el.querySelector('.i-vitrase-group').classList.toggle('hidden', !hasVitrase);
+    el.querySelector('.i-vitrase-fullness-group').classList.toggle('hidden', !hasVitrase);
+    
+    el.querySelector('.i-rel-group').classList.toggle('hidden', !hasRel);
 
-function removeWindow(btn) {
-    btn.closest('.window-item').remove();
-    document.querySelectorAll('.window-item').forEach((el, index) => {
-        el.querySelector('.window-title').textContent = `Jendela ${index + 1}`;
-    });
-    calculate();
+    if (hasRel) {
+        const label = (p === 5) ? 'Rel Double (Twin)' : 'Rel';
+        el.querySelector('.i-rel-label').textContent = label;
+        const sel = el.querySelector('.i-rel');
+        const prevVal = sel.value; // Remember previous selection
+        sel.innerHTML = (p === 5) ? optsRailDouble : optsRailSingle;
+        if (sel.innerHTML.trim() === '' && p === 5) {
+            sel.innerHTML = optsRailSingle; // fallback
+        }
+        if (prevVal) sel.value = prevVal; // Try to restore if possible
+    }
 }
 
 // ==================== CALCULATION ENGINE ====================
-function calculate() {
-    let windows = [];
-    document.querySelectorAll('.window-item').forEach((el, index) => {
-        const w = parseFloat(el.querySelector('.window-width').value) || 0;
-        const h = parseFloat(el.querySelector('.window-height').value) || 0;
-        if(w > 0 && h > 0) {
-            windows.push({ w, h, index: index + 1 });
-        }
-    });
-
-    const p = selectedPackage;
-    const pkgLabels = {
-        1: "Paket 1 (Gorden Saja)",
-        2: "Paket 2 (Gorden + Rel)",
-        3: "Paket 3 (Vitrase Saja)",
-        4: "Paket 4 (Vitrase + Rel)",
-        5: "Paket 5 (Gorden+Rel+Vitrase+Rel)"
-    };
-    const pkgName = pkgLabels[p] || `Paket ${p}`;
-
-    let details = [];
+function recalcAll() {
     let total = 0;
-    let sambungMessages = [];
+    let details = [];
+    let cartItems = [];
+    let noteLines = [];
 
-    const optGorden = document.getElementById('fabricGorden').selectedOptions[0];
-    const priceGorden = parseFloat(optGorden?.dataset.price || 0);
-    
-    const optVitrase = document.getElementById('fabricVitrase').selectedOptions[0];
-    const priceVitrase = parseFloat(optVitrase?.dataset.price || 0);
-    
-    const optRel = document.getElementById('railSelect').selectedOptions[0];
-    const priceRel = parseFloat(optRel?.dataset.price || 0);
+    document.querySelectorAll('.window-item').forEach((el, index) => {
+        const name = el.querySelector('.i-name').value || `Jendela ${index+1}`;
+        const p = parseInt(el.querySelector('.i-paket').value);
+        const w = parseFloat(el.querySelector('.i-lebar').value) || 0;
+        const h = parseFloat(el.querySelector('.i-tinggi').value) || 0;
+        
+        const gFullness = parseFloat(el.querySelector('.i-gorden-fullness').value) || 2.5;
+        const vFullness = parseFloat(el.querySelector('.i-vitrase-fullness').value) || 2;
+        
+        const optGorden = el.querySelector('.i-gorden').selectedOptions[0];
+        const pGorden = parseFloat(optGorden?.dataset.price || 0);
+        const nGorden = optGorden ? optGorden.text.split(' —')[0] : '';
+        
+        const optVitrase = el.querySelector('.i-vitrase').selectedOptions[0];
+        const pVitrase = parseFloat(optVitrase?.dataset.price || 0);
+        const nVitrase = optVitrase ? optVitrase.text.split(' —')[0] : '';
+        
+        const optRel = el.querySelector('.i-rel').selectedOptions[0];
+        const pRel = parseFloat(optRel?.dataset.price || 0);
+        const nRel = optRel ? optRel.text.split(' —')[0] : '';
 
-    windows.forEach(win => {
-        const width = win.w;
-        const height = win.h;
-        const winLabel = windows.length > 1 ? ` <span class="bg-white/20 px-1.5 py-0.5 rounded text-[10px]">Jendela ${win.index}</span>` : '';
-        const winTextLabel = windows.length > 1 ? ` [Jendela ${win.index}]` : '';
+        if (w > 0 && h > 0) {
+            let itemTotal = 0;
+            const tinggiEfektif = h + KELIMAN;
+            const jumlahSambung = Math.ceil(tinggiEfektif / KAIN_WIDTH);
+            
+            const sambungInfo = el.querySelector('.i-sambung-info');
+            if (jumlahSambung > 1) {
+                sambungInfo.classList.remove('hidden');
+                el.querySelector('.i-sambung-text').innerHTML = `Tinggi perlu disambung ${jumlahSambung - 1}×.`;
+            } else {
+                sambungInfo.classList.add('hidden');
+            }
+            
+            const meterRel = Math.max(w, 100) / 100;
+            
+            let htmlParts = [];
+            let textParts = [];
 
-        const tinggiEfektif = height + KELIMAN;
-        const jumlahSambung = Math.ceil(tinggiEfektif / KAIN_WIDTH);
-        
-        if (jumlahSambung > 1) {
-            sambungMessages.push(`Jendela ${win.index}: Tinggi perlu disambung ${jumlahSambung - 1}×.`);
-        }
-        
-        const meterRel = Math.max(width, 100) / 100;
-        
-        if ([1,2,5].includes(p)) {
-            const meterKain = (width / 100) * gordenFullness * jumlahSambung;
-            const meterRounded = Math.ceil(meterKain * 10) / 10;
-            const harga = meterRounded * priceGorden;
-            const lbl = (p === 1) ? pkgName : `${pkgName} - Gorden`;
-            details.push({ labelHTML: `${lbl}${winLabel}`, labelText: `${lbl}${winTextLabel}`, sub: `${width}cm ÷ 100 × ${gordenFullness} × ${jumlahSambung} = ${meterRounded.toFixed(1)}m`, meter: `${meterRounded.toFixed(1)} m`, price: harga });
-            total += harga;
-        }
-        
-        if ([3,4,5].includes(p)) {
-            const meterVit = (width / 100) * vitraseFullness * jumlahSambung;
-            const meterRounded = Math.ceil(meterVit * 10) / 10;
-            const harga = meterRounded * priceVitrase;
-            const lbl = (p === 3) ? pkgName : `${pkgName} - Vitrase`;
-            details.push({ labelHTML: `${lbl}${winLabel}`, labelText: `${lbl}${winTextLabel}`, sub: `${width}cm ÷ 100 × ${vitraseFullness} × ${jumlahSambung} = ${meterRounded.toFixed(1)}m`, meter: `${meterRounded.toFixed(1)} m`, price: harga });
-            total += harga;
-        }
-        
-        if ([2,4,5].includes(p)) {
-            const harga = meterRel * priceRel;
-            const lbl = `${pkgName} - Rel`;
-            details.push({ labelHTML: `${lbl}${winLabel}`, labelText: `${lbl}${winTextLabel}`, sub: `min(${width}cm, 100cm) → ${meterRel.toFixed(1)}m`, meter: `${meterRel.toFixed(1)} m`, price: harga });
-            total += harga;
+            if ([1,2,5].includes(p)) {
+                const meterKain = (w / 100) * gFullness * jumlahSambung;
+                const meterRounded = Math.ceil(meterKain * 10) / 10;
+                const harga = meterRounded * pGorden;
+                itemTotal += harga;
+                htmlParts.push(`<span class="block">• Gor (${nGorden}): ${meterRounded.toFixed(1)}m × Rp ${pGorden.toLocaleString('id-ID')} = Rp ${harga.toLocaleString('id-ID')}</span>`);
+                textParts.push(`- Gor (${nGorden}): ${meterRounded.toFixed(1)}m x Rp ${pGorden.toLocaleString('id-ID')} = Rp ${harga.toLocaleString('id-ID')}`);
+            }
+            if ([3,4,5].includes(p)) {
+                const meterVit = (w / 100) * vFullness * jumlahSambung;
+                const meterRounded = Math.ceil(meterVit * 10) / 10;
+                const harga = meterRounded * pVitrase;
+                itemTotal += harga;
+                htmlParts.push(`<span class="block">• Vit (${nVitrase}): ${meterRounded.toFixed(1)}m × Rp ${pVitrase.toLocaleString('id-ID')} = Rp ${harga.toLocaleString('id-ID')}</span>`);
+                textParts.push(`- Vit (${nVitrase}): ${meterRounded.toFixed(1)}m x Rp ${pVitrase.toLocaleString('id-ID')} = Rp ${harga.toLocaleString('id-ID')}`);
+            }
+            if ([2,4,5].includes(p)) {
+                const harga = meterRel * pRel;
+                itemTotal += harga;
+                htmlParts.push(`<span class="block">• Rel (${nRel}): ${meterRel.toFixed(1)}m × Rp ${pRel.toLocaleString('id-ID')} = Rp ${harga.toLocaleString('id-ID')}</span>`);
+                textParts.push(`- Rel (${nRel}): ${meterRel.toFixed(1)}m x Rp ${pRel.toLocaleString('id-ID')} = Rp ${harga.toLocaleString('id-ID')}`);
+            }
+            
+            total += itemTotal;
+
+            const pkgLabels = {1:"Gorden",2:"Gor+Rel",3:"Vitrase",4:"Vit+Rel",5:"Gor+Rel+Vit+Rel"};
+            
+            details.push(`
+                <div class="flex items-start justify-between bg-white/10 p-3 rounded-xl item-detail">
+                    <div>
+                        <p class="font-bold text-sm flex items-center gap-2">${name} <span class="bg-white/20 px-1.5 py-0.5 rounded text-[10px] uppercase">Pkt ${p}</span></p>
+                        <div class="text-emerald-100 text-[11px] mt-1 space-y-0.5">
+                            ${htmlParts.join('')}
+                        </div>
+                    </div>
+                    <div class="text-right shrink-0 ml-4">
+                        <p class="font-black text-sm">Rp ${itemTotal.toLocaleString('id-ID')}</p>
+                    </div>
+                </div>
+            `);
+
+            noteLines.push(`${index+1}. ${name} (Paket ${pkgLabels[p]}) - L:${w}cm T:${h}cm\n${textParts.join('\n')}\nSubtotal: Rp ${itemTotal.toLocaleString('id-ID')}`);
+            
+            cartItems.push({
+                no: index+1, name, paket: p, w, h, gFullness, vFullness, 
+                gordenId: optGorden?.value, vitraseId: optVitrase?.value, relId: optRel?.value,
+                subtotal: itemTotal
+            });
         }
     });
 
-    const sambungInfo = document.getElementById('sambungInfo');
-    if (sambungMessages.length > 0) {
-        sambungInfo.classList.remove('hidden');
-        document.getElementById('sambungText').innerHTML = sambungMessages.join('<br>');
-    } else {
-        sambungInfo.classList.add('hidden');
-    }
-
-    // Render details
     const container = document.getElementById('resultDetails');
-    container.innerHTML = details.map(d => `
-        <div class="flex items-start justify-between bg-white/10 p-3 rounded-xl item-detail" data-labeltext="${d.labelText}" data-price="${d.price}">
-            <div>
-                <p class="font-bold text-sm flex items-center gap-2">${d.labelHTML}</p>
-                <p class="text-emerald-100 text-[11px] mt-0.5">${d.sub}</p>
-            </div>
-            <div class="text-right shrink-0 ml-4">
-                <p class="font-black">Rp ${d.price.toLocaleString('id-ID')}</p>
-                <p class="text-emerald-100 text-[11px]">${d.meter}</p>
-            </div>
-        </div>
-    `).join('');
+    container.innerHTML = details.length ? details.join('') : '<p class="text-center text-emerald-100/70 text-sm py-4 font-medium">Belum ada item ditambahkan</p>';
 
     rawTotal = total;
+    
+    document.getElementById('final_cart_json').value = JSON.stringify(cartItems);
+    document.getElementById('final_invoice_notes').value = noteLines.join('\n\n');
+    
     calculateTotal();
 }
 
@@ -624,14 +570,6 @@ function calculateTotal() {
     // Update hidden inputs
     document.getElementById('final_total_amount').value = rawTotal;
     document.getElementById('final_discount_amount').value = discount;
-    
-    // Generate invoice notes
-    let notes = [];
-    const items = document.getElementById('resultDetails').querySelectorAll('.item-detail');
-    items.forEach(item => {
-        notes.push(`${item.dataset.labeltext}: Rp ${Number(item.dataset.price).toLocaleString('id-ID')}`);
-    });
-    document.getElementById('final_invoice_notes').value = notes.join('\n');
 }
 
 // Form validation before submit
@@ -650,26 +588,27 @@ document.getElementById('posForm').addEventListener('submit', function(e) {
     }
 });
 
-// Setup customer selector change event to handle existing discount
+// Setup customer selector change event to handle existing discount and cart
 document.getElementById('survey_selector').addEventListener('change', function() {
     const opt = this.options[this.selectedIndex];
     if (opt && opt.value) {
         const discount = opt.dataset.discount || 0;
         document.getElementById('discount_input').value = Number(discount).toLocaleString('id-ID');
-        calculateTotal();
+        // Calculate will use this new discount value
+        recalcAll();
     }
 });
 
 // ==================== INIT ====================
-updateVisibility();
-calculate();
+// Add first default window
+addWindow();
 
 // Initialize discount if survey is pre-selected
 const initialSurveyOpt = document.getElementById('survey_selector').selectedOptions[0];
 if (initialSurveyOpt && initialSurveyOpt.value) {
     const initDiscount = initialSurveyOpt.dataset.discount || 0;
     document.getElementById('discount_input').value = Number(initDiscount).toLocaleString('id-ID');
-    calculateTotal();
+    recalcAll();
 }
 </script>
 
