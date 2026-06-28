@@ -31,6 +31,14 @@ try {
     $stmt = $pdo->query("SELECT setting_key, setting_value FROM app_settings");
     $settings = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
     
+    // Pastikan ada spasi (non-breaking space) agar tidak menempel dengan tulisan Rp di mobile app
+    if (isset($settings['promo_banner_desc'])) {
+        $settings['promo_banner_desc'] = rtrim($settings['promo_banner_desc']) . "\u{00A0}";
+    }
+    if (isset($settings['promo_banner_highlight'])) {
+        $settings['promo_banner_highlight'] = "\u{00A0}" . ltrim($settings['promo_banner_highlight']);
+    }
+    
     echo json_encode([
         'status' => 'success',
         'data' => $settings
