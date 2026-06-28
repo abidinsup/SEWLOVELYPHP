@@ -33,7 +33,6 @@ $menu_items = [
     ['icon' => 'bell-ring', 'label' => 'Push Notifikasi', 'href' => 'notifications.php'],
     ['icon' => 'package', 'label' => 'Manajemen Produk', 'href' => 'products.php'],
     ['icon' => 'scissors', 'label' => 'Katalog Gorden', 'href' => 'curtain_catalog.php'],
-    ['icon' => 'layout-template', 'label' => 'Pengaturan Promo', 'href' => 'promo_settings.php'],
     ['icon' => 'settings', 'label' => 'Pengaturan', 'href' => 'settings.php']
 ];
 ?>
