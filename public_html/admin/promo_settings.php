@@ -21,7 +21,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_settings'])) {
     if (!$tableExists) {
         $errorMessage = "Tabel app_settings belum ada. Silakan jalankan file SQL promo_settings.sql terlebih dahulu di phpMyAdmin.";
     } else {
-        $active = $_POST['promo_banner_active'] ?? '0';
         $title = $_POST['promo_banner_title'] ?? '';
         $desc = $_POST['promo_banner_desc'] ?? '';
         $highlight = $_POST['promo_banner_highlight'] ?? '';
@@ -30,7 +29,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_settings'])) {
             $pdo->beginTransaction();
             
             $stmt = $pdo->prepare("UPDATE app_settings SET setting_value = ? WHERE setting_key = ?");
-            $stmt->execute([$active, 'promo_banner_active']);
             $stmt->execute([$title, 'promo_banner_title']);
             $stmt->execute([$desc, 'promo_banner_desc']);
             $stmt->execute([$highlight, 'promo_banner_highlight']);
@@ -108,18 +106,6 @@ if ($tableExists) {
                 </div>
 
                 <form method="POST" class="space-y-6">
-                    <!-- Toggle Aktif/Nonaktif -->
-                    <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                        <div>
-                            <p class="font-bold text-slate-900">Tampilkan Banner</p>
-                            <p class="text-sm text-slate-500">Matikan jika sedang tidak ada promo</p>
-                        </div>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" name="promo_banner_active" value="1" class="peer" style="opacity: 0; position: absolute; width: 0; height: 0;" <?php echo $settings['promo_banner_active'] == '1' ? 'checked' : ''; ?>>
-                            <div class="w-14 h-7 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-emerald-500"></div>
-                        </label>
-                    </div>
-
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Judul Promo</label>
                         <textarea name="promo_banner_title" rows="2" required
