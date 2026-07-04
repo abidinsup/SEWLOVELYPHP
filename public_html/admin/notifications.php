@@ -23,6 +23,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_notification']
     }
 }
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_all_notifications'])) {
+    try {
+        $pdo->exec("DELETE FROM notifications");
+        $successMessage = "Semua riwayat notifikasi berhasil dihapus.";
+    } catch (PDOException $e) {
+        $errorMessage = "Gagal menghapus semua riwayat notifikasi.";
+    }
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_notification'])) {
     $title = trim($_POST['title'] ?? '');
     $body = trim($_POST['body'] ?? '');
@@ -187,6 +196,13 @@ try {
                             <p class="text-sm text-slate-500">50 notifikasi terakhir yang dikirim</p>
                         </div>
                     </div>
+                    <?php if (!empty($notifications)): ?>
+                    <form method="POST" onsubmit="return confirm('Peringatan: Anda yakin ingin menghapus SEMUA riwayat notifikasi secara permanen?');">
+                        <button type="submit" name="delete_all_notifications" class="text-sm font-bold text-red-600 bg-red-50 hover:bg-red-100 px-4 py-2 rounded-xl transition-colors flex items-center gap-2">
+                            <i data-lucide="trash-2" class="h-4 w-4"></i> Hapus Semua
+                        </button>
+                    </form>
+                    <?php endif; ?>
                 </div>
 
                 <div class="divide-y divide-slate-50">
