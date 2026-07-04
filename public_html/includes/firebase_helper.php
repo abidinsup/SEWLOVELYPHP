@@ -108,7 +108,7 @@ function getFirebaseProjectId() {
  * @param string $title Judul notifikasi
  * @param string $body Isi notifikasi
  * @param array $data Data tambahan (optional)
- * @return bool Success or not
+ * @return array Array berisi status 'success' dan detail 'raw_response' jika gagal
  */
 function sendFCMToDevice($token, $title, $body, $data = []) {
     $accessToken = getFirebaseAccessToken();
@@ -116,7 +116,7 @@ function sendFCMToDevice($token, $title, $body, $data = []) {
     
     if (!$accessToken || !$projectId) {
         error_log('FCM Error: Gagal mendapat access token atau project ID');
-        return false;
+        return ['success' => false, 'raw_response' => 'No access token'];
     }
     
     $message = [
@@ -157,10 +157,13 @@ function sendFCMToDevice($token, $title, $body, $data = []) {
     
     if ($httpCode !== 200) {
         error_log("FCM Error: Gagal kirim notifikasi. HTTP $httpCode. Response: $response");
-        return false;
+        return [
+            'success' => false, 
+            'raw_response' => $response
+        ];
     }
     
-    return true;
+    return ['success' => true];
 }
 
 /**
@@ -191,10 +194,20 @@ function sendNotificationToUser($pdo, $userId, $title, $body, $type, $data = [])
         
         // 3. Kirim ke setiap device
         foreach ($tokens as $token) {
-            sendFCMToDevice($token, $title, $body, array_merge($data, ['type' => $type]));
+            $res = sendFCMToDevice($token, $title, $body, array_merge($data, ['type' => $type]));
+            if (!$res['success'] && isset($res['raw_response'])) {
+                $rawResp = is_string($res['raw_response']) ? $res['raw_response'] : json_encode($res['raw_response']);
+                if (strpos($rawResp, 'UNREGISTERED') !== false || strpos($rawResp, 'INVALID_ARGUMENT') !== false) {
+                    $delStmt = $pdo->prepare("DELETE FROM fcm_tokens WHERE token = ?");
+                    $delStmt->execute([$token]);
+                }
+            }
         }
+        
+        return count($tokens) > 0;
     } catch (PDOException $e) {
         error_log("FCM Token Error: " . $e->getMessage());
+        return false;
     }
 }
 
@@ -215,28 +228,56 @@ function sendBroadcastNotification($pdo, $title, $body, $data = []) {
         error_log("FCM DB Error: " . $e->getMessage());
     }
     
-    // 2. Ambil semua FCM token yang aktif
+    // 2. Ambil semua FCM token yang aktif beserta datanya
     try {
-        $stmt = $pdo->query("SELECT DISTINCT token FROM fcm_tokens");
-        $tokens = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        $stmt = $pdo->query("
+            SELECT f.token, f.user_id, p.full_name 
+            FROM fcm_tokens f
+            LEFT JOIN partners p ON f.user_id = p.user_id
+        ");
+        $tokens_data = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
         $sent = 0;
         $failed = 0;
+        $failed_details = [];
         
         // 3. Kirim ke setiap device
-        foreach ($tokens as $token) {
+        foreach ($tokens_data as $td) {
+            $token = $td['token'];
+            $name = !empty($td['full_name']) ? $td['full_name'] : 'Unknown User (ID: ' . ($td['user_id'] ?? 'N/A') . ')';
+
             $result = sendFCMToDevice($token, $title, $body, array_merge($data, ['type' => 'promo']));
-            if ($result) {
+            
+            if ($result['success']) {
                 $sent++;
             } else {
                 $failed++;
+                $rawResp = is_string($result['raw_response']) ? $result['raw_response'] : json_encode($result['raw_response']);
+                
+                $reason = "Error tidak diketahui";
+                if (strpos($rawResp, 'UNREGISTERED') !== false) {
+                    $reason = "Aplikasi telah di-uninstall (UNREGISTERED)";
+                    // Auto-delete dead token
+                    $delStmt = $pdo->prepare("DELETE FROM fcm_tokens WHERE token = ?");
+                    $delStmt->execute([$token]);
+                } elseif (strpos($rawResp, 'INVALID_ARGUMENT') !== false) {
+                    $reason = "Token perangkat tidak valid (INVALID_ARGUMENT)";
+                    // Auto-delete invalid token
+                    $delStmt = $pdo->prepare("DELETE FROM fcm_tokens WHERE token = ?");
+                    $delStmt->execute([$token]);
+                }
+                
+                $failed_details[] = [
+                    'name' => $name,
+                    'reason' => $reason
+                ];
             }
         }
         
-        return ['sent' => $sent, 'failed' => $failed, 'total' => count($tokens)];
+        return ['sent' => $sent, 'failed' => $failed, 'total' => count($tokens_data), 'failed_details' => $failed_details];
     } catch (PDOException $e) {
         error_log("FCM Broadcast Error: " . $e->getMessage());
-        return ['sent' => 0, 'failed' => 0, 'total' => 0];
+        return ['sent' => 0, 'failed' => 0, 'total' => 0, 'failed_details' => []];
     }
 }
 ?>

@@ -36,11 +36,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_notification']))
             $successMessage = "Notifikasi berhasil dikirim ke {$result['sent']} dari {$result['total']} device.";
             if ($result['failed'] > 0) {
                 $successMessage .= " ({$result['failed']} gagal)";
+                if (isset($result['failed_details']) && count($result['failed_details']) > 0) {
+                    $failedDetailsData = $result['failed_details'];
+                }
             }
         } else {
             // Target specific user
             $target_user_id = (int)$target;
-            $result = sendFCMNotification($pdo, $target_user_id, $title, $body, ['type' => 'promo']);
+            $result = sendNotificationToUser($pdo, $target_user_id, $title, $body, 'promo');
             if ($result) {
                 $successMessage = "Notifikasi berhasil dikirim ke mitra terpilih.";
             } else {
@@ -89,6 +92,34 @@ try {
             <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 flex items-center gap-3">
                 <i data-lucide="check-circle-2" class="h-5 w-5 text-emerald-600"></i>
                 <p class="text-emerald-800 font-medium"><?php echo htmlspecialchars($successMessage); ?></p>
+            </div>
+            <?php endif; ?>
+
+            <?php if (isset($failedDetailsData) && count($failedDetailsData) > 0): ?>
+            <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex flex-col gap-3">
+                <div class="flex items-center gap-3">
+                    <i data-lucide="alert-triangle" class="h-5 w-5 text-amber-600"></i>
+                    <p class="text-amber-800 font-medium">Detail Notifikasi Gagal:</p>
+                </div>
+                <div class="bg-white rounded-xl border border-amber-100 overflow-hidden text-sm">
+                    <table class="w-full text-left">
+                        <thead class="bg-amber-50/50">
+                            <tr>
+                                <th class="px-4 py-2 font-semibold text-amber-900 border-b border-amber-100">Nama Mitra</th>
+                                <th class="px-4 py-2 font-semibold text-amber-900 border-b border-amber-100">Alasan Gagal</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-amber-50">
+                            <?php foreach ($failedDetailsData as $fd): ?>
+                            <tr>
+                                <td class="px-4 py-2 text-amber-800"><?php echo htmlspecialchars($fd['name']); ?></td>
+                                <td class="px-4 py-2 text-amber-700"><?php echo htmlspecialchars($fd['reason']); ?></td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-xs text-amber-700/80 font-medium">* Token yang sudah tidak valid telah dihapus otomatis dari sistem.</p>
             </div>
             <?php endif; ?>
 

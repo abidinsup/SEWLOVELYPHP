@@ -23,26 +23,40 @@ $userId = $input['user_id'] ?? null;
 $token = $input['token'] ?? null;
 $deviceInfo = $input['device_info'] ?? null;
 
-if (empty($userId) || empty($token)) {
-    echo json_encode(['status' => 'error', 'message' => 'user_id dan token wajib diisi']);
+if (empty($token)) {
+    echo json_encode(['status' => 'error', 'message' => 'Token wajib diisi']);
     exit;
 }
 
 try {
-    // Cek apakah token ini sudah ada untuk user ini
-    $stmt = $pdo->prepare("SELECT id FROM fcm_tokens WHERE user_id = ? AND token = ?");
-    $stmt->execute([$userId, $token]);
-    $existing = $stmt->fetch();
+    // Auto migration to allow NULL user_id and drop foreign key if exists
+    try {
+        $pdo->exec("ALTER TABLE fcm_tokens DROP FOREIGN KEY fcm_tokens_ibfk_1");
+    } catch (Exception $e) {}
+    try {
+        $pdo->exec("ALTER TABLE fcm_tokens MODIFY user_id INT NULL");
+    } catch (Exception $e) {}
+    
+    // Convert empty string to null for user_id
+    if (empty($userId)) {
+        $userId = null;
+    }
+        // Cek apakah token ini sudah ada
+        $stmt = $pdo->prepare("SELECT id FROM fcm_tokens WHERE token = ?");
+        $stmt->execute([$token]);
+        $existing = $stmt->fetch();
 
-    if ($existing) {
-        // Update timestamp saja
-        $stmt = $pdo->prepare("UPDATE fcm_tokens SET device_info = ?, updated_at = NOW() WHERE id = ?");
-        $stmt->execute([$deviceInfo, $existing['id']]);
-    } else {
-        // Hapus token lama user ini (1 user = 1 device aktif, bisa diubah jika mau multi-device)
-        // Jika mau multi-device, comment baris di bawah ini
-        $stmt = $pdo->prepare("DELETE FROM fcm_tokens WHERE user_id = ?");
-        $stmt->execute([$userId]);
+        if ($existing) {
+            // Update user_id dan timestamp saja
+            $stmt = $pdo->prepare("UPDATE fcm_tokens SET user_id = ?, device_info = ?, updated_at = NOW() WHERE id = ?");
+            $stmt->execute([$userId, $deviceInfo, $existing['id']]);
+        } else {
+            // Hapus token lama user ini jika ada (1 user = 1 device aktif)
+            // Kecuali jika guest (userId = null)
+            if ($userId !== null) {
+                $stmt = $pdo->prepare("DELETE FROM fcm_tokens WHERE user_id = ?");
+                $stmt->execute([$userId]);
+            }
 
         // Insert token baru
         $stmt = $pdo->prepare("INSERT INTO fcm_tokens (user_id, token, device_info) VALUES (?, ?, ?)");
