@@ -153,12 +153,13 @@ if ($tableExists) {
                             </div>
                         </div>
                         
-                        <label class="relative inline-flex items-center cursor-pointer" onclick="togglePromoSwitch(<?php echo $i; ?>)">
-                            <input type="checkbox" id="promo_banner_<?php echo $i; ?>_active" name="promo_banner_<?php echo $i; ?>_active" value="1" class="hidden" <?php echo $settings["promo_banner_{$i}_active"] == '1' ? 'checked' : ''; ?>>
-                            <div id="promo_bg_<?php echo $i; ?>" class="w-11 h-6 rounded-full transition-colors duration-300 <?php echo $settings["promo_banner_{$i}_active"] == '1' ? 'bg-emerald-500' : 'bg-slate-200'; ?>"></div>
-                            <div id="promo_knob_<?php echo $i; ?>" class="absolute left-[2px] top-[2px] w-5 h-5 bg-white rounded-full transition-transform duration-300 shadow-sm border border-slate-200 pointer-events-none <?php echo $settings["promo_banner_{$i}_active"] == '1' ? 'translate-x-[20px]' : ''; ?>"></div>
-                            <span class="ml-3 text-sm font-bold text-slate-700">Aktif</span>
-                        </label>
+                        <input type="checkbox" id="promo_banner_<?php echo $i; ?>_active" name="promo_banner_<?php echo $i; ?>_active" value="1" style="display:none;" <?php echo $settings["promo_banner_{$i}_active"] == '1' ? 'checked' : ''; ?>>
+                        <div id="promo_toggle_<?php echo $i; ?>" onclick="togglePromoSwitch(<?php echo $i; ?>)" style="display:inline-flex; align-items:center; cursor:pointer; user-select:none;">
+                            <div style="position:relative; width:44px; height:24px; border-radius:12px; transition:background-color 0.3s; <?php echo $settings["promo_banner_{$i}_active"] == '1' ? 'background-color:#10b981;' : 'background-color:#cbd5e1;'; ?>" id="promo_bg_<?php echo $i; ?>">
+                                <div style="position:absolute; top:2px; left:2px; width:20px; height:20px; background:#fff; border-radius:50%; box-shadow:0 1px 3px rgba(0,0,0,0.2); transition:transform 0.3s; <?php echo $settings["promo_banner_{$i}_active"] == '1' ? 'transform:translateX(20px);' : 'transform:translateX(0);'; ?>" id="promo_knob_<?php echo $i; ?>"></div>
+                            </div>
+                            <span style="margin-left:12px; font-size:14px; font-weight:700; color:#334155;">Aktif</span>
+                        </div>
                     </div>
 
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -232,21 +233,20 @@ if ($tableExists) {
 
 <script>
     function togglePromoSwitch(index) {
-        setTimeout(() => {
-            const checkbox = document.getElementById('promo_banner_' + index + '_active');
-            const bg = document.getElementById('promo_bg_' + index);
-            const knob = document.getElementById('promo_knob_' + index);
-            
-            if (checkbox.checked) {
-                bg.classList.remove('bg-slate-200');
-                bg.classList.add('bg-emerald-500');
-                knob.classList.add('translate-x-[20px]');
-            } else {
-                bg.classList.remove('bg-emerald-500');
-                bg.classList.add('bg-slate-200');
-                knob.classList.remove('translate-x-[20px]');
-            }
-        }, 10);
+        var checkbox = document.getElementById('promo_banner_' + index + '_active');
+        var bg = document.getElementById('promo_bg_' + index);
+        var knob = document.getElementById('promo_knob_' + index);
+        
+        // Toggle checkbox state
+        checkbox.checked = !checkbox.checked;
+        
+        if (checkbox.checked) {
+            bg.style.backgroundColor = '#10b981';
+            knob.style.transform = 'translateX(20px)';
+        } else {
+            bg.style.backgroundColor = '#cbd5e1';
+            knob.style.transform = 'translateX(0)';
+        }
     }
 
     function showTab(index) {
