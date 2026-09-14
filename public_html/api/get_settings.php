@@ -11,37 +11,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 require_once '../includes/config.php';
 
+// Fungsi helper untuk mendapatkan base url untuk gambar
+function getBaseUrl() {
+    $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
+    $host = $_SERVER['HTTP_HOST'];
+    $path = dirname($_SERVER['PHP_SELF']);
+    // path is usually /api, so we need to go one level up
+    $path = str_replace('/api', '', $path);
+    return $protocol . "://" . $host . $path;
+}
+
 try {
-    // Check if table exists
     $stmt = $pdo->query("SHOW TABLES LIKE 'app_settings'");
     if ($stmt->rowCount() == 0) {
-        // Table doesn't exist yet, return defaults
-        echo json_encode([
-            'status' => 'success',
-            'data' => [
-                'promo_banner_active' => '1',
-                'promo_banner_title' => "Raih Bonusnya!\nSelesaikan 5 Pemasangan",
-                'promo_banner_desc' => "Selesaikan 5 projek pemasangan dan\ndapatkan komisi tambahan ",
-                'promo_banner_highlight' => "Rp 300.000"
-            ]
-        ]);
+        echo json_encode(['status' => 'error', 'message' => 'Tabel setting belum ada']);
         exit;
     }
 
     $stmt = $pdo->query("SELECT setting_key, setting_value FROM app_settings");
-    $settings = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
+    $rawSettings = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
     
-    // Pastikan ada spasi (non-breaking space) agar tidak menempel dengan tulisan Rp di mobile app
-    if (isset($settings['promo_banner_desc'])) {
-        $settings['promo_banner_desc'] = rtrim($settings['promo_banner_desc']) . "\u{00A0}";
-    }
-    if (isset($settings['promo_banner_highlight'])) {
-        $settings['promo_banner_highlight'] = "\u{00A0}" . ltrim($settings['promo_banner_highlight']);
+    $baseUrl = getBaseUrl();
+    
+    $banners = [];
+    for ($i = 1; $i <= 3; $i++) {
+        $desc = $rawSettings["promo_banner_{$i}_desc"] ?? '';
+        $highlight = $rawSettings["promo_banner_{$i}_highlight"] ?? '';
+        $image = $rawSettings["promo_banner_{$i}_image"] ?? '';
+        
+        // Pastikan ada spasi (non-breaking space) agar tidak menempel dengan tulisan Rp di mobile app
+        $desc = rtrim($desc) . "\u{00A0}";
+        $highlight = "\u{00A0}" . ltrim($highlight);
+        
+        $imageUrl = !empty($image) ? $baseUrl . "/uploads/banners/" . $image : "";
+        
+        // Hanya masukkan banner yang aktif
+        if (isset($rawSettings["promo_banner_{$i}_active"]) && $rawSettings["promo_banner_{$i}_active"] == '1') {
+            $banners[] = [
+                'id' => $i,
+                'title' => $rawSettings["promo_banner_{$i}_title"] ?? '',
+                'desc' => $desc,
+                'highlight' => $highlight,
+                'image_url' => $imageUrl
+            ];
+        }
     }
     
     echo json_encode([
         'status' => 'success',
-        'data' => $settings
+        'data' => [
+            'banners' => $banners
+        ]
     ]);
 } catch (PDOException $e) {
     echo json_encode(['status' => 'error', 'message' => 'Gagal mengambil pengaturan.']);
