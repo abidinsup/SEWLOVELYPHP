@@ -38,7 +38,7 @@ try {
             u.email, u.role, u.created_at as joined_at,
             p.full_name, p.whatsapp_number, p.birth_date, p.address, 
             p.bank_name, p.account_number, p.account_holder, 
-            p.affiliate_code, p.commission_percentage, p.is_active, p.status
+            p.affiliate_code, p.commission_percentage, p.division, p.is_active, p.status
         FROM users u
         LEFT JOIN partners p ON u.id = p.user_id
         WHERE u.id = ?

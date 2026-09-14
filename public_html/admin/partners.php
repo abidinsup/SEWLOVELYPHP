@@ -16,6 +16,7 @@ try {
             u.email,
             p.whatsapp_number AS phone,
             p.created_at AS joinDate,
+            p.division,
             p.affiliate_code AS affiliateCode,
             p.commission_percentage AS commissionPercentage,
             p.bank_name AS bankName,
@@ -47,6 +48,7 @@ try {
             'totalSales' => 0,
             'status' => $p['status'],
             'is_active' => $p['is_active'],
+            'division' => $p['division'] ?: 'marketing',
             'affiliateCode' => $p['affiliateCode'],
             'commissionPercentage' => $p['commissionPercentage'] ?: 5,
             'bankName' => $p['bankName'] ?: '-',
@@ -91,6 +93,7 @@ try {
                             <tr>
                                 <th class="p-4 rounded-tl-lg">ID Mitra</th>
                                 <th class="p-4">Nama Lengkap</th>
+                                <th class="p-4">Divisi</th>
                                 <th class="p-4">Tanggal Gabung</th>
                                 <th class="p-4">Total Penjualan</th>
                                 <th class="p-4 text-center">Status</th>
@@ -110,6 +113,15 @@ try {
                                             <?php echo $partner['name']; ?>
                                         </span>
                                     </div>
+                                </td>
+                                <td class="p-4">
+                                    <?php if($partner['division'] == 'marketing'): ?>
+                                        <span class="px-2 py-1 rounded-full text-xs font-bold capitalize bg-blue-100 text-blue-700">Marketing</span>
+                                    <?php elseif($partner['division'] == 'security'): ?>
+                                        <span class="px-2 py-1 rounded-full text-xs font-bold capitalize bg-slate-200 text-slate-700">Security</span>
+                                    <?php else: ?>
+                                        <span class="px-2 py-1 rounded-full text-xs font-bold capitalize bg-amber-100 text-amber-700">Lainnya</span>
+                                    <?php endif; ?>
                                 </td>
                                 <td class="p-4 text-slate-600"><?php echo $partner['joinDate']; ?></td>
                                 <td class="p-4 font-bold text-emerald-600">Rp <?php echo number_format($partner['totalSales'], 0, ',', '.'); ?></td>
@@ -189,6 +201,10 @@ try {
                     <div>
                         <p class="text-slate-400 text-[10px] uppercase font-bold">No. WhatsApp</p>
                         <p class="font-medium text-slate-900" id="detailPhone">-</p>
+                    </div>
+                    <div>
+                        <p class="text-slate-400 text-[10px] uppercase font-bold">Divisi</p>
+                        <p class="font-medium text-slate-900 capitalize" id="detailDivision">-</p>
                     </div>
                 </div>
             </div>
@@ -304,6 +320,7 @@ function openDetailModal(partnerJson) {
     document.getElementById('detailName').innerText = p.name;
     document.getElementById('detailEmail').innerText = p.email;
     document.getElementById('detailPhone').innerText = p.phone;
+    document.getElementById('detailDivision').innerText = p.division;
     
     document.getElementById('detailCode').innerText = p.affiliateCode;
     document.getElementById('detailCommPct').innerText = p.commissionPercentage + '%';
