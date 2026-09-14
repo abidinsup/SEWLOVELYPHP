@@ -153,10 +153,10 @@ if ($tableExists) {
                             </div>
                         </div>
                         
-                        <label for="toggle_banner_<?php echo $i; ?>" class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" id="toggle_banner_<?php echo $i; ?>" name="promo_banner_<?php echo $i; ?>_active" value="1" class="peer opacity-0 absolute w-0 h-0" <?php echo $settings["promo_banner_{$i}_active"] == '1' ? 'checked' : ''; ?>>
-                            <div class="w-11 h-6 bg-slate-200 rounded-full peer-checked:bg-emerald-500 transition-colors duration-300"></div>
-                            <div class="absolute left-[2px] top-[2px] w-5 h-5 bg-white rounded-full transition-transform duration-300 peer-checked:translate-x-full shadow-sm border border-slate-200 pointer-events-none"></div>
+                        <label class="relative inline-flex items-center cursor-pointer" onclick="togglePromoSwitch(<?php echo $i; ?>)">
+                            <input type="checkbox" id="promo_banner_<?php echo $i; ?>_active" name="promo_banner_<?php echo $i; ?>_active" value="1" class="hidden" <?php echo $settings["promo_banner_{$i}_active"] == '1' ? 'checked' : ''; ?>>
+                            <div id="promo_bg_<?php echo $i; ?>" class="w-11 h-6 rounded-full transition-colors duration-300 <?php echo $settings["promo_banner_{$i}_active"] == '1' ? 'bg-emerald-500' : 'bg-slate-200'; ?>"></div>
+                            <div id="promo_knob_<?php echo $i; ?>" class="absolute left-[2px] top-[2px] w-5 h-5 bg-white rounded-full transition-transform duration-300 shadow-sm border border-slate-200 pointer-events-none <?php echo $settings["promo_banner_{$i}_active"] == '1' ? 'translate-x-[20px]' : ''; ?>"></div>
                             <span class="ml-3 text-sm font-bold text-slate-700">Aktif</span>
                         </label>
                     </div>
@@ -231,6 +231,24 @@ if ($tableExists) {
 </div>
 
 <script>
+    function togglePromoSwitch(index) {
+        setTimeout(() => {
+            const checkbox = document.getElementById('promo_banner_' + index + '_active');
+            const bg = document.getElementById('promo_bg_' + index);
+            const knob = document.getElementById('promo_knob_' + index);
+            
+            if (checkbox.checked) {
+                bg.classList.remove('bg-slate-200');
+                bg.classList.add('bg-emerald-500');
+                knob.classList.add('translate-x-[20px]');
+            } else {
+                bg.classList.remove('bg-emerald-500');
+                bg.classList.add('bg-slate-200');
+                knob.classList.remove('translate-x-[20px]');
+            }
+        }, 10);
+    }
+
     function showTab(index) {
         // Hide all
         for(let i=1; i<=3; i++) {
