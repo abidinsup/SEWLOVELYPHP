@@ -28,6 +28,8 @@ $address = $input['address'] ?? $_POST['address'] ?? '';
 $bankName = $input['bank_name'] ?? $_POST['bank_name'] ?? '';
 $accountNumber = $input['account_number'] ?? $_POST['account_number'] ?? '';
 $accountHolder = $input['account_holder'] ?? $_POST['account_holder'] ?? '';
+$division = $input['division'] ?? $_POST['division'] ?? 'marketing';
+$commissionRate = ($division === 'marketing') ? 5 : 2.5;
 
 if (empty($email) || empty($password) || empty($fullName) || empty($whatsapp)) {
     echo json_encode(['status' => 'error', 'message' => 'Data wajib (Email, Password, Nama, WA) belum lengkap!']);
@@ -69,11 +71,11 @@ try {
 
     // Insert partner
     $stmtPartner = $pdo->prepare("
-        INSERT INTO partners (user_id, full_name, whatsapp_number, birth_date, address, bank_name, account_number, account_holder, affiliate_code, status, is_active)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', 0)
+        INSERT INTO partners (user_id, full_name, division, commission_percentage, whatsapp_number, birth_date, address, bank_name, account_number, account_holder, affiliate_code, status, is_active)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', 0)
     ");
     $stmtPartner->execute([
-        $userId, $fullName, $whatsapp, $birthDate, $address, $bankName, $accountNumber, $accountHolder, $affiliateCode
+        $userId, $fullName, $division, $commissionRate, $whatsapp, $birthDate, $address, $bankName, $accountNumber, $accountHolder, $affiliateCode
     ]);
 
     $pdo->commit();
@@ -87,3 +89,4 @@ try {
     echo json_encode(['status' => 'error', 'message' => 'Database error: ' . $e->getMessage()]);
 }
 ?>
+

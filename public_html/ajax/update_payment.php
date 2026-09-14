@@ -29,9 +29,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($status === 'paid') {
             // Ambil data pesanan
             $stmtData = $pdo->prepare("
-                SELECT i.invoice_number, i.total_amount, s.partner_id, s.calculator_type
+                SELECT i.invoice_number, i.total_amount, s.partner_id, s.calculator_type, p.commission_percentage
                 FROM invoices i
                 JOIN surveys s ON i.survey_id = s.id
+                JOIN partners p ON s.partner_id = p.id
                 WHERE i.id = ?
             ");
             $stmtData->execute([$invoice_id]);
@@ -41,15 +42,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $partner_id = $orderData['partner_id'];
                 $total_amount = $orderData['total_amount'];
                 $invoice_number = $orderData['invoice_number'];
-                $commission_desc = "Komisi POS Sprei (5%) - " . $invoice_number;
+                $commission_percentage = isset($orderData['commission_percentage']) ? floatval($orderData['commission_percentage']) : 5.0;
+                $commission_desc = "Komisi POS Sprei ({$commission_percentage}%) - " . $invoice_number;
 
                 // Cek apakah komisi untuk invoice ini sudah pernah diberikan
-                $stmtCheck = $pdo->prepare("SELECT id FROM transactions WHERE partner_id = ? AND type = 'commission' AND description = ?");
-                $stmtCheck->execute([$partner_id, $commission_desc]);
+                $stmtCheck = $pdo->prepare("SELECT id FROM transactions WHERE partner_id = ? AND type = 'commission' AND description LIKE ?");
+                $stmtCheck->execute([$partner_id, "Komisi POS Sprei% - " . $invoice_number]);
                 
                 if (!$stmtCheck->fetch()) {
-                    // Hitung komisi 5%
-                    $commission_amount = $total_amount * 0.05;
+                    // Hitung komisi dinamis
+                    $commission_amount = $total_amount * ($commission_percentage / 100);
 
                     // Masukkan ke transaksi
                     $stmtComm = $pdo->prepare("
@@ -70,3 +72,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     echo json_encode(['success' => false, 'message' => 'Invalid request method']);
 }
 ?>
+
