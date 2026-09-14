@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_settings'])) {
             $stmt = $pdo->prepare("UPDATE app_settings SET setting_value = ? WHERE setting_key = ?");
             
             for ($i = 1; $i <= 3; $i++) {
-                $active = isset($_POST["promo_banner_{$i}_active"]) ? '1' : '0';
+                $active = ($_POST["promo_banner_{$i}_active"] ?? '0') === '1' ? '1' : '0';
                 $title = $_POST["promo_banner_{$i}_title"] ?? '';
                 $desc = $_POST["promo_banner_{$i}_desc"] ?? '';
                 $highlight = $_POST["promo_banner_{$i}_highlight"] ?? '';
@@ -153,12 +153,12 @@ if ($tableExists) {
                             </div>
                         </div>
                         
-                        <input type="checkbox" id="promo_banner_<?php echo $i; ?>_active" name="promo_banner_<?php echo $i; ?>_active" value="1" style="display:none;" <?php echo $settings["promo_banner_{$i}_active"] == '1' ? 'checked' : ''; ?>>
-                        <div id="promo_toggle_<?php echo $i; ?>" onclick="togglePromoSwitch(<?php echo $i; ?>)" style="display:inline-flex; align-items:center; cursor:pointer; user-select:none;">
-                            <div style="position:relative; width:44px; height:24px; border-radius:12px; transition:background-color 0.3s; <?php echo $settings["promo_banner_{$i}_active"] == '1' ? 'background-color:#10b981;' : 'background-color:#cbd5e1;'; ?>" id="promo_bg_<?php echo $i; ?>">
-                                <div style="position:absolute; top:2px; left:2px; width:20px; height:20px; background:#fff; border-radius:50%; box-shadow:0 1px 3px rgba(0,0,0,0.2); transition:transform 0.3s; <?php echo $settings["promo_banner_{$i}_active"] == '1' ? 'transform:translateX(20px);' : 'transform:translateX(0);'; ?>" id="promo_knob_<?php echo $i; ?>"></div>
+                        <input type="hidden" id="promo_banner_<?php echo $i; ?>_active" name="promo_banner_<?php echo $i; ?>_active" value="<?php echo $settings["promo_banner_{$i}_active"] == '1' ? '1' : '0'; ?>">
+                        <div class="promo-toggle-wrap" onclick="togglePromoSwitch(<?php echo $i; ?>)">
+                            <div class="promo-toggle-track <?php echo $settings["promo_banner_{$i}_active"] == '1' ? 'active' : ''; ?>" id="promo_bg_<?php echo $i; ?>">
+                                <div class="promo-toggle-knob <?php echo $settings["promo_banner_{$i}_active"] == '1' ? 'active' : ''; ?>" id="promo_knob_<?php echo $i; ?>"></div>
                             </div>
-                            <span style="margin-left:12px; font-size:14px; font-weight:700; color:#334155;">Aktif</span>
+                            <span class="promo-toggle-label">Aktif</span>
                         </div>
                     </div>
 
@@ -231,21 +231,70 @@ if ($tableExists) {
     </main>
 </div>
 
+<style>
+    .promo-toggle-wrap {
+        display: inline-flex;
+        align-items: center;
+        cursor: pointer;
+        -webkit-user-select: none;
+        user-select: none;
+    }
+    .promo-toggle-track {
+        position: relative;
+        width: 44px;
+        height: 24px;
+        border-radius: 12px;
+        background-color: #cbd5e1;
+        -webkit-transition: background-color 0.3s ease;
+        transition: background-color 0.3s ease;
+    }
+    .promo-toggle-track.active {
+        background-color: #10b981;
+    }
+    .promo-toggle-knob {
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 20px;
+        height: 20px;
+        background: #ffffff;
+        border-radius: 50%;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        -webkit-transition: -webkit-transform 0.3s ease;
+        transition: transform 0.3s ease;
+        -webkit-transform: translateX(0px);
+        transform: translateX(0px);
+    }
+    .promo-toggle-knob.active {
+        -webkit-transform: translateX(20px);
+        transform: translateX(20px);
+    }
+    .promo-toggle-label {
+        margin-left: 12px;
+        font-size: 14px;
+        font-weight: 700;
+        color: #334155;
+    }
+</style>
+
 <script>
     function togglePromoSwitch(index) {
-        var checkbox = document.getElementById('promo_banner_' + index + '_active');
+        var input = document.getElementById('promo_banner_' + index + '_active');
         var bg = document.getElementById('promo_bg_' + index);
         var knob = document.getElementById('promo_knob_' + index);
         
-        // Toggle checkbox state
-        checkbox.checked = !checkbox.checked;
+        var isActive = input.value === '1';
         
-        if (checkbox.checked) {
-            bg.style.backgroundColor = '#10b981';
-            knob.style.transform = 'translateX(20px)';
+        if (isActive) {
+            // Turn OFF
+            input.value = '0';
+            bg.className = 'promo-toggle-track';
+            knob.className = 'promo-toggle-knob';
         } else {
-            bg.style.backgroundColor = '#cbd5e1';
-            knob.style.transform = 'translateX(0)';
+            // Turn ON
+            input.value = '1';
+            bg.className = 'promo-toggle-track active';
+            knob.className = 'promo-toggle-knob active';
         }
     }
 
