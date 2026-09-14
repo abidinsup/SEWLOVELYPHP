@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt->execute([$email, $password_hash]);
             $user_id = $pdo->lastInsertId();
 
-            $stmt = $pdo->prepare("INSERT INTO partners (user_id, full_name, whatsapp_number, birth_date, address, bank_name, account_number, account_holder, affiliate_code, is_active, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 'pending')");
+            $stmt = $pdo->prepare("INSERT INTO partners (user_id, full_name, whatsapp_number, birth_date, address, bank_name, account_number, account_holder, affiliate_code, division, commission_percentage, is_active, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'marketing', 5.00, 0, 'pending')");
             $stmt->execute([$user_id, $name, $phone, $birth_date, $address, $bank_name ?: null, $account_number ?: null, $account_holder ?: null, $affiliate_code]);
 
             $pdo->commit();
