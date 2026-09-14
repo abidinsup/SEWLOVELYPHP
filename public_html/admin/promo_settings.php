@@ -154,8 +154,9 @@ if ($tableExists) {
                         </div>
                         
                         <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" name="promo_banner_<?php echo $i; ?>_active" value="1" class="hidden peer" <?php echo $settings["promo_banner_{$i}_active"] == '1' ? 'checked' : ''; ?>>
-                            <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
+                            <input type="checkbox" name="promo_banner_<?php echo $i; ?>_active" value="1" class="peer" style="opacity:0; position:absolute; z-index:-1; width:1px; height:1px;" <?php echo $settings["promo_banner_{$i}_active"] == '1' ? 'checked' : ''; ?>>
+                            <div class="w-11 h-6 bg-slate-200 rounded-full peer-checked:bg-emerald-500 transition-colors duration-300"></div>
+                            <div class="absolute left-[2px] top-[2px] w-5 h-5 bg-white rounded-full transition-transform duration-300 peer-checked:translate-x-full shadow-sm border border-slate-200"></div>
                             <span class="ml-3 text-sm font-bold text-slate-700">Aktif</span>
                         </label>
                     </div>
