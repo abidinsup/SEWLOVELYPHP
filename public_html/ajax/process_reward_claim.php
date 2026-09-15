@@ -37,8 +37,13 @@ try {
 
     // If rejected, refund points to partner
     if ($action === 'reject') {
-        $stmt = $pdo->prepare("UPDATE partners SET points = points + ? WHERE id = ?");
+        $stmt = $pdo->prepare("UPDATE partners SET reward_points = reward_points + ? WHERE id = ?");
         $stmt->execute([$claim['points_used'], $claim['partner_id']]);
+        
+        // Also log this in reward_points_history
+        $desc = "Refund poin dari klaim hadiah yang ditolak (" . $claim['reward_name'] . ")";
+        $stmtHist = $pdo->prepare("INSERT INTO reward_points_history (partner_id, points, type, description) VALUES (?, ?, 'earn', ?)");
+        $stmtHist->execute([$claim['partner_id'], $claim['points_used'], $desc]);
     }
 
     $pdo->commit();
