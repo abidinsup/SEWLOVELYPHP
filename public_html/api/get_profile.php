@@ -39,7 +39,7 @@ try {
             p.full_name, p.whatsapp_number, p.birth_date, p.address, 
             p.bank_name, p.account_number, p.account_holder, 
             p.affiliate_code, COALESCE(p.commission_percentage, 5.00) AS commission_percentage, 
-            COALESCE(p.division, 'marketing') AS division, p.is_active, p.status
+            COALESCE(p.division, 'marketing') AS division, COALESCE(p.reward_points, 0) AS reward_points, p.is_active, p.status
         FROM users u
         LEFT JOIN partners p ON u.id = p.user_id
         WHERE u.id = ?

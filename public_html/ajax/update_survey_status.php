@@ -46,8 +46,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt = $pdo->prepare("UPDATE surveys SET status = ?, survey_date = ?, survey_time = ?, updated_at = NOW() WHERE id = ?");
             $result = $stmt->execute([$new_status, $survey_date, $survey_time, $survey_id]);
         } else {
-            $stmt = $pdo->prepare("UPDATE surveys SET status = ?, updated_at = NOW() WHERE id = ?");
-            $result = $stmt->execute([$new_status, $survey_id]);
+            // Include net_profit and points_earned if status is done
+            if ($new_status === 'done' && isset($_POST['net_profit'])) {
+                $net_profit = floatval($_POST['net_profit']);
+                $points_earned = floor($net_profit / 500000);
+                $stmt = $pdo->prepare("UPDATE surveys SET status = ?, net_profit = ?, points_earned = ?, updated_at = NOW() WHERE id = ?");
+                $result = $stmt->execute([$new_status, $net_profit, $points_earned, $survey_id]);
+            } else {
+                $stmt = $pdo->prepare("UPDATE surveys SET status = ?, updated_at = NOW() WHERE id = ?");
+                $result = $stmt->execute([$new_status, $survey_id]);
+            }
         }
 
         if ($result && $stmt->rowCount() > 0) {
@@ -73,6 +81,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     $stmtUpd = $pdo->prepare("UPDATE invoices SET commission_paid = 1 WHERE id = ?");
                     $stmtUpd->execute([$inv['invoice_id']]);
+                }
+                
+                // Reward Points Logic
+                if (isset($net_profit) && isset($points_earned) && $points_earned > 0) {
+                    // Get partner id first if not already retrieved
+                    $partner_id = null;
+                    if ($inv && isset($inv['partner_id'])) {
+                        $partner_id = $inv['partner_id'];
+                    } else {
+                        $stmtP = $pdo->prepare("SELECT partner_id FROM surveys WHERE id = ?");
+                        $stmtP->execute([$survey_id]);
+                        $sData = $stmtP->fetch();
+                        if ($sData) {
+                            $partner_id = $sData['partner_id'];
+                        }
+                    }
+                    
+                    if ($partner_id) {
+                        // Update partner reward_points
+                        $stmtUpdatePoints = $pdo->prepare("UPDATE partners SET reward_points = reward_points + ? WHERE id = ?");
+                        $stmtUpdatePoints->execute([$points_earned, $partner_id]);
+                        
+                        // Insert history
+                        $desc = "Poin dari transaksi Selesai (Profit: Rp " . number_format($net_profit, 0, ',', '.') . ")";
+                        $stmtHist = $pdo->prepare("INSERT INTO reward_points_history (partner_id, survey_id, points, type, description) VALUES (?, ?, ?, 'earn', ?)");
+                        $stmtHist->execute([$partner_id, $survey_id, $points_earned, $desc]);
+                    }
                 }
             }
 

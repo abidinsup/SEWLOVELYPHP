@@ -286,8 +286,10 @@ function promptSchedule(surveyId, newStatus, label, existingDate = '', existingT
 
 function updateSurveyStatus(surveyId, newStatus, label) {
     const isCancel = newStatus === 'cancelled';
-    Swal.fire({
-        title: isCancel ? 'Batalkan Survey?' : 'Konfirmasi Update Status',
+    const isDone = newStatus === 'done';
+    
+    let swalConfig = {
+        title: isCancel ? 'Batalkan Survey?' : (isDone ? 'Pekerjaan Selesai' : 'Konfirmasi Update Status'),
         text: isCancel ? 'Survey ini akan dibatalkan dan tidak bisa dikembalikan.' : `Ubah status survey menjadi "${label}"?`,
         icon: isCancel ? 'warning' : 'question',
         showCancelButton: true,
@@ -296,11 +298,35 @@ function updateSurveyStatus(surveyId, newStatus, label) {
         confirmButtonText: isCancel ? 'Ya, Batalkan' : 'Ya, Update',
         cancelButtonText: 'Batal',
         reverseButtons: true
-    }).then((result) => {
+    };
+
+    if (isDone) {
+        swalConfig.text = 'Silakan masukkan nilai Keuntungan Bersih (Net Profit) dari transaksi ini untuk menghitung Poin Reward Mitra.';
+        swalConfig.input = 'number';
+        swalConfig.inputLabel = 'Keuntungan Bersih (Rp)';
+        swalConfig.inputPlaceholder = 'Contoh: 1500000';
+        swalConfig.inputAttributes = {
+            min: 0,
+            step: 1
+        };
+        swalConfig.preConfirm = (value) => {
+            if (!value || value < 0) {
+                Swal.showValidationMessage('Keuntungan Bersih wajib diisi dengan angka yang valid!');
+                return false;
+            }
+            return value;
+        };
+    }
+
+    Swal.fire(swalConfig).then((result) => {
         if (result.isConfirmed) {
             const formData = new FormData();
             formData.append('survey_id', surveyId);
             formData.append('status', newStatus);
+            
+            if (isDone) {
+                formData.append('net_profit', result.value);
+            }
 
             fetch('../ajax/update_survey_status.php', {
                 method: 'POST',

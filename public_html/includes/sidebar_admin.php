@@ -29,6 +29,7 @@ $menu_items = [
     ['icon' => 'user-check', 'label' => 'Approval Data Mitra', 'href' => 'approvals.php', 'badge' => $pending_partners_count],
     ['icon' => 'users', 'label' => 'Data Mitra', 'href' => 'partners.php'],
     ['icon' => 'wallet', 'label' => 'Approval Penarikan', 'href' => 'withdrawals.php'],
+    ['icon' => 'gift', 'label' => 'Approval Poin Hadiah', 'href' => 'reward_claims.php'],
     ['icon' => 'gift', 'label' => 'Bonus Manual', 'href' => 'bonus.php'],
     ['icon' => 'bell-ring', 'label' => 'Push Notifikasi', 'href' => 'notifications.php'],
     ['icon' => 'package', 'label' => 'Manajemen Produk', 'href' => 'products.php'],
