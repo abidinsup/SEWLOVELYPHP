@@ -75,8 +75,8 @@ try {
             <!-- Notes / Rules Section -->
             <div class="bg-gradient-to-br from-indigo-50 to-blue-50 border border-indigo-100 rounded-3xl p-6 shadow-sm">
                 <div class="flex items-start gap-4">
-                    <div class="bg-indigo-500 text-white p-3 rounded-2xl shrink-0 shadow-lg shadow-indigo-500/30">
-                        <i data-lucide="info" class="w-6 h-6"></i>
+                    <div class="bg-indigo-500 text-white p-3 rounded-2xl shrink-0 shadow-lg shadow-indigo-500/30 flex items-center justify-center">
+                        <span class="text-2xl leading-none">💡</span>
                     </div>
                     <div class="flex-1 w-full text-slate-700 space-y-4 text-sm">
                         <h2 class="text-lg font-bold text-indigo-900 mb-2">🌟 Rekap Resmi Aturan Sistem Poin & Hadiah (Loyalty)</h2>
@@ -100,19 +100,19 @@ try {
                                 <p class="text-xs text-slate-500 mb-2">Budget hadiah perusahaan: 10% dari keuntungan bersih.</p>
                                 <div class="grid grid-cols-2 gap-2 text-xs">
                                     <div class="bg-white p-2 rounded-xl border border-indigo-50">
-                                        <b>Uang Tunai (Rp 150k)</b><br/>Butuh: 3 Poin<br/><span class="text-slate-400">Untung: Rp 1.5M</span>
+                                        <b>Uang Tunai (Rp 150k)</b><br/>Butuh: 3 Poin<br/><span class="text-slate-400">Untung: Rp 1,5 Juta</span>
                                     </div>
                                     <div class="bg-white p-2 rounded-xl border border-indigo-50">
-                                        <b>Kipas Angin/Magic Com</b><br/>Butuh: 6 Poin<br/><span class="text-slate-400">Untung: Rp 3M</span>
+                                        <b>Kipas Angin/Magic Com</b><br/>Butuh: 6 Poin<br/><span class="text-slate-400">Untung: Rp 3 Juta</span>
                                     </div>
                                     <div class="bg-white p-2 rounded-xl border border-indigo-50">
-                                        <b>Smart TV</b><br/>Butuh: 30 Poin<br/><span class="text-slate-400">Untung: Rp 15M</span>
+                                        <b>Smart TV</b><br/>Butuh: 30 Poin<br/><span class="text-slate-400">Untung: Rp 15 Juta</span>
                                     </div>
                                     <div class="bg-white p-2 rounded-xl border border-indigo-50">
-                                        <b>Sepeda Motor</b><br/>Butuh: 360 Poin<br/><span class="text-slate-400">Untung: Rp 180M</span>
+                                        <b>Sepeda Motor</b><br/>Butuh: 360 Poin<br/><span class="text-slate-400">Untung: Rp 180 Juta</span>
                                     </div>
                                     <div class="bg-white p-2 rounded-xl border border-indigo-50 col-span-2 text-center">
-                                        <b>Paket Umroh</b><br/>Butuh: 650 Poin <span class="text-slate-400">(Perusahaan untung: Rp 325M)</span>
+                                        <b>Paket Umroh</b><br/>Butuh: 650 Poin <span class="text-slate-400">(Perusahaan untung: Rp 325 Juta)</span>
                                     </div>
                                 </div>
                             </div>
