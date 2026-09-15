@@ -72,6 +72,65 @@ try {
                 </div>
             </div>
 
+            <!-- Notes / Rules Section -->
+            <div class="bg-gradient-to-br from-indigo-50 to-blue-50 border border-indigo-100 rounded-3xl p-6 shadow-sm">
+                <div class="flex items-start gap-4">
+                    <div class="bg-indigo-500 text-white p-3 rounded-2xl shrink-0 shadow-lg shadow-indigo-500/30">
+                        <i data-lucide="info" class="w-6 h-6"></i>
+                    </div>
+                    <div class="flex-1 w-full text-slate-700 space-y-4 text-sm">
+                        <h2 class="text-lg font-bold text-indigo-900 mb-2">🌟 Rekap Resmi Aturan Sistem Poin & Hadiah (Loyalty)</h2>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="bg-white/60 p-4 rounded-2xl border border-white">
+                                <h3 class="font-bold text-indigo-800 mb-2">📌 Aturan Dasar Perolehan Poin</h3>
+                                <ul class="list-disc pl-5 space-y-1 text-slate-600">
+                                    <li><b>1 Poin = Rp 500.000 Keuntungan Bersih</b> (Omzet dipotong modal, ongkos jahit, dan komisi).</li>
+                                    <li>Sistem menggunakan pembulatan ke bawah (floor).</li>
+                                </ul>
+                                <div class="mt-3 text-xs bg-white p-2 rounded-xl border border-indigo-50 space-y-1">
+                                    <p>• Untung Rp 500.000 ➔ <b>1 Poin</b></p>
+                                    <p>• Untung Rp 1.200.000 ➔ <b>2 Poin</b></p>
+                                    <p>• Untung Rp 400.000 ➔ <b>0 Poin</b></p>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-white/60 p-4 rounded-2xl border border-white">
+                                <h3 class="font-bold text-indigo-800 mb-2">🎁 Daftar Target Hadiah (Milestone)</h3>
+                                <p class="text-xs text-slate-500 mb-2">Budget hadiah perusahaan: 10% dari keuntungan bersih.</p>
+                                <div class="grid grid-cols-2 gap-2 text-xs">
+                                    <div class="bg-white p-2 rounded-xl border border-indigo-50">
+                                        <b>Uang Tunai (Rp 150k)</b><br/>Butuh: 3 Poin<br/><span class="text-slate-400">Untung: Rp 1.5M</span>
+                                    </div>
+                                    <div class="bg-white p-2 rounded-xl border border-indigo-50">
+                                        <b>Kipas Angin/Magic Com</b><br/>Butuh: 6 Poin<br/><span class="text-slate-400">Untung: Rp 3M</span>
+                                    </div>
+                                    <div class="bg-white p-2 rounded-xl border border-indigo-50">
+                                        <b>Smart TV</b><br/>Butuh: 30 Poin<br/><span class="text-slate-400">Untung: Rp 15M</span>
+                                    </div>
+                                    <div class="bg-white p-2 rounded-xl border border-indigo-50">
+                                        <b>Sepeda Motor</b><br/>Butuh: 360 Poin<br/><span class="text-slate-400">Untung: Rp 180M</span>
+                                    </div>
+                                    <div class="bg-white p-2 rounded-xl border border-indigo-50 col-span-2 text-center">
+                                        <b>Paket Umroh</b><br/>Butuh: 650 Poin <span class="text-slate-400">(Perusahaan untung: Rp 325M)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white/60 p-4 rounded-2xl border border-white mt-4">
+                            <h3 class="font-bold text-indigo-800 mb-2">⚙️ Bagaimana Sistem Ini Berjalan?</h3>
+                            <ul class="space-y-1 text-slate-600 list-decimal pl-4">
+                                <li><b>Input Admin:</b> Saat pekerjaan beres, Admin klik "Selesai" di halaman Status Order (Surveys).</li>
+                                <li><b>Kalkulasi:</b> Sistem memunculkan pop-up input nominal Keuntungan Bersih.</li>
+                                <li><b>Pemberian Poin:</b> Sistem otomatis membagi dengan 500.000 dan menambahkannya ke saldo Mitra.</li>
+                                <li><b>Tukar Poin:</b> Jika Mitra menukar poin dengan hadiah, saldonya berkurang sesuai harga hadiah. Untuk umroh, mereka harus fokus menabung.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
                 <!-- Search Bar -->
                 <div class="p-4 border-b border-slate-100 flex items-center gap-2">
