@@ -29,7 +29,7 @@ $bankName = $input['bank_name'] ?? $_POST['bank_name'] ?? '';
 $accountNumber = $input['account_number'] ?? $_POST['account_number'] ?? '';
 $accountHolder = $input['account_holder'] ?? $_POST['account_holder'] ?? '';
 $division = $input['division'] ?? $_POST['division'] ?? 'marketing';
-$commissionRate = ($division === 'marketing') ? 5 : 2.5;
+$commissionRate = ($division === 'marketing' || $division === 'affiliate') ? 5 : 2.5;
 
 if (empty($email) || empty($password) || empty($fullName) || empty($whatsapp)) {
     echo json_encode(['status' => 'error', 'message' => 'Data wajib (Email, Password, Nama, WA) belum lengkap!']);
@@ -89,4 +89,5 @@ try {
     echo json_encode(['status' => 'error', 'message' => 'Database error: ' . $e->getMessage()]);
 }
 ?>
+
 

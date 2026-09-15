@@ -120,7 +120,7 @@ try {
                                     <?php elseif($partner['division'] == 'security'): ?>
                                         <span class="px-2 py-1 rounded-full text-xs font-bold capitalize bg-slate-200 text-slate-700">Security</span>
                                     <?php else: ?>
-                                        <span class="px-2 py-1 rounded-full text-xs font-bold capitalize bg-amber-100 text-amber-700">Lainnya</span>
+                                        <span class="px-2 py-1 rounded-full text-xs font-bold capitalize bg-amber-100 text-amber-700">Affiliate</span>
                                     <?php endif; ?>
                                 </td>
                                 <td class="p-4 text-slate-600"><?php echo $partner['joinDate']; ?></td>
@@ -427,3 +427,4 @@ function submitResetPassword() {
 </script>
 
 <?php include '../includes/footer.php'; ?>
+
