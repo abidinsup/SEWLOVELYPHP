@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_settings'])) {
     } else {
         try {
             $pdo->beginTransaction();
-            $stmt = $pdo->prepare("UPDATE app_settings SET setting_value = ? WHERE setting_key = ?");
+            $stmt = $pdo->prepare("INSERT INTO app_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)");
             
             for ($i = 1; $i <= 3; $i++) {
                 $active = ($_POST["promo_banner_{$i}_active"] ?? '0') === '1' ? '1' : '0';
@@ -36,10 +36,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_settings'])) {
                 $desc = $_POST["promo_banner_{$i}_desc"] ?? '';
                 $highlight = $_POST["promo_banner_{$i}_highlight"] ?? '';
                 
-                $stmt->execute([$active, "promo_banner_{$i}_active"]);
-                $stmt->execute([$title, "promo_banner_{$i}_title"]);
-                $stmt->execute([$desc, "promo_banner_{$i}_desc"]);
-                $stmt->execute([$highlight, "promo_banner_{$i}_highlight"]);
+                $stmt->execute(["promo_banner_{$i}_active", $active]);
+                $stmt->execute(["promo_banner_{$i}_title", $title]);
+                $stmt->execute(["promo_banner_{$i}_desc", $desc]);
+                $stmt->execute(["promo_banner_{$i}_highlight", $highlight]);
+
                 
                 // Handle Image Upload
                 if (isset($_FILES["promo_banner_{$i}_image"]) && $_FILES["promo_banner_{$i}_image"]['error'] === UPLOAD_ERR_OK) {
@@ -48,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_settings'])) {
                     $fileSize = $_FILES["promo_banner_{$i}_image"]['size'];
                     $fileType = $_FILES["promo_banner_{$i}_image"]['type'];
                     
-                    $allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+                    $allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
                     
                     if (in_array($fileType, $allowedTypes) && $fileSize <= 2 * 1024 * 1024) {
                         $extension = pathinfo($fileName, PATHINFO_EXTENSION);
@@ -56,12 +57,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_settings'])) {
                         $destPath = $uploadDir . $newFileName;
                         
                         if (move_uploaded_file($fileTmpPath, $destPath)) {
-                            $stmt->execute([$newFileName, "promo_banner_{$i}_image"]);
+                            $stmt->execute(["promo_banner_{$i}_image", $newFileName]);
                         } else {
                             $errorMessage .= "Gagal mengupload gambar untuk Banner $i. ";
                         }
                     } else {
-                        $errorMessage .= "Format gambar Banner $i tidak valid (hanya JPG/PNG) atau ukuran lebih dari 2MB. ";
+                        $errorMessage .= "Format gambar Banner $i tidak valid (hanya JPG/PNG/WEBP) atau ukuran lebih dari 2MB. ";
                     }
                 }
             }
@@ -206,13 +207,13 @@ if ($tableExists) {
                             <?php endif; ?>
 
                             <div class="relative group">
-                                <input type="file" name="promo_banner_<?php echo $i; ?>_image" id="file-<?php echo $i; ?>" accept=".jpg,.jpeg,.png" class="hidden" onchange="updateFileName(<?php echo $i; ?>)">
+                                <input type="file" name="promo_banner_<?php echo $i; ?>_image" id="file-<?php echo $i; ?>" accept=".jpg,.jpeg,.png,.webp" class="hidden" onchange="updateFileName(<?php echo $i; ?>)">
                                 <label for="file-<?php echo $i; ?>" class="w-full flex items-center justify-center gap-2 h-12 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold text-sm cursor-pointer transition-colors border border-slate-200">
                                     <i data-lucide="upload-cloud" class="h-4 w-4"></i>
                                     <span id="filename-<?php echo $i; ?>">Pilih Gambar Baru</span>
                                 </label>
                             </div>
-                            <p class="text-[10px] text-slate-400 text-center">Format: JPG, PNG. Maksimal 2MB. Rekomendasi ukuran: 600x300 px.</p>
+                            <p class="text-[10px] text-slate-400 text-center">Format: JPG, PNG, WEBP. Maksimal 2MB. Rekomendasi ukuran: 600x300 px.</p>
                         </div>
                     </div>
                 </div>
