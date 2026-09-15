@@ -118,6 +118,28 @@ try {
                             </div>
                         </div>
 
+                        <div class="bg-emerald-50 p-4 rounded-2xl border border-emerald-100 mt-4">
+                            <h3 class="font-bold text-emerald-800 mb-2 flex items-center gap-2"><i data-lucide="shield-check" class="w-4 h-4"></i> Simulasi Keamanan Profit Perusahaan (Anti-Rugi)</h3>
+                            <p class="text-slate-600 text-xs mb-3">Sistem ini 100% aman dan bukan undian. Perusahaan tidak akan pernah rugi meskipun semua Mitra melakukan klaim, karena harga hadiah diambil tepat dari <b>10% Keuntungan Bersih</b> yang sudah diberikan Mitra kepada Perusahaan.</p>
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
+                                <div class="bg-white p-3 rounded-xl border border-emerald-100">
+                                    <b>Klaim Kipas Angin (6 Poin)</b><br/>
+                                    Perusahaan sudah untung bersih: Rp 3.000.000<br/>
+                                    Budget hadiah (10%): <span class="text-emerald-600 font-bold">Rp 300.000</span> (Cukup untuk beli Kipas Angin)
+                                </div>
+                                <div class="bg-white p-3 rounded-xl border border-emerald-100">
+                                    <b>Klaim Motor (360 Poin)</b><br/>
+                                    Perusahaan sudah untung bersih: Rp 180.000.000<br/>
+                                    Budget hadiah (10%): <span class="text-emerald-600 font-bold">Rp 18.000.000</span> (Cukup untuk beli Motor)
+                                </div>
+                                <div class="bg-white p-3 rounded-xl border border-emerald-100 md:col-span-2 lg:col-span-1">
+                                    <b>Klaim Umroh (650 Poin)</b><br/>
+                                    Perusahaan sudah untung bersih: Rp 325.000.000<br/>
+                                    Budget hadiah (10%): <span class="text-emerald-600 font-bold">Rp 32.500.000</span> (Cukup untuk Umroh)
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="bg-white/60 p-4 rounded-2xl border border-white mt-4">
                             <h3 class="font-bold text-indigo-800 mb-2">⚙️ Bagaimana Sistem Ini Berjalan?</h3>
                             <ul class="space-y-1 text-slate-600 list-decimal pl-4">
