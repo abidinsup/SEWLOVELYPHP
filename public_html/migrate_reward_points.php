@@ -1,0 +1,1 @@
+<?php require_once 'includes/config.php'; try { $pdo->exec('ALTER TABLE partners ADD COLUMN reward_points INT DEFAULT 0'); echo 'Success: Column reward_points added.'; } catch(PDOException $e) { echo 'Error: ' . $e->getMessage(); } ?>
