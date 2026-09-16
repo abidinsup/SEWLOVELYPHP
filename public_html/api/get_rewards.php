@@ -43,35 +43,35 @@ try {
             'id' => 1,
             'name' => 'Uang Tunai (Rp 150.000)',
             'points_required' => 3,
-            'image' => 'https://cdn-icons-png.flaticon.com/512/2489/2489756.png',
+            'image' => 'https://img.icons8.com/color/512/money-bag.png',
             'description' => 'Bonus uang tunai langsung ke rekening Anda'
         ],
         [
             'id' => 2,
             'name' => 'Kipas Angin / Magic Com',
             'points_required' => 6,
-            'image' => 'https://cdn-icons-png.flaticon.com/512/2635/2635835.png',
+            'image' => 'https://img.icons8.com/color/512/fan.png',
             'description' => 'Peralatan rumah tangga pilihan'
         ],
         [
             'id' => 3,
             'name' => 'Smart TV',
             'points_required' => 30,
-            'image' => 'https://cdn-icons-png.flaticon.com/512/2855/2855598.png',
+            'image' => 'https://img.icons8.com/color/512/tv.png',
             'description' => 'Smart TV 32 Inch'
         ],
         [
             'id' => 4,
             'name' => 'Sepeda Motor',
             'points_required' => 360,
-            'image' => 'https://cdn-icons-png.flaticon.com/512/726/726198.png',
+            'image' => 'https://img.icons8.com/color/512/motorcycle.png',
             'description' => 'Satu unit sepeda motor'
         ],
         [
             'id' => 5,
             'name' => 'Paket Umroh',
             'points_required' => 650,
-            'image' => 'https://cdn-icons-png.flaticon.com/512/3592/3592576.png',
+            'image' => 'https://img.icons8.com/color/512/kaaba.png',
             'description' => 'Perjalanan Umroh eksklusif'
         ]
     ];
