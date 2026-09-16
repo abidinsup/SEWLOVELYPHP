@@ -64,7 +64,7 @@ try {
             'id' => 4,
             'name' => 'Sepeda Motor',
             'points_required' => 360,
-            'image' => 'https://img.icons8.com/color/512/motorcycle.png',
+            'image' => 'https://img.icons8.com/color/512/scooter.png',
             'description' => 'Satu unit sepeda motor'
         ],
         [
